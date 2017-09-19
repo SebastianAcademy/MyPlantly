@@ -1,0 +1,21 @@
+SPRINT 1
+
+	-Login/Signup
+		-First name/Last name
+		-Email (registration verification) / used as username
+		-Password
+
+	-Sidebar/topbar (only show when logged in)
+		(Follow you to every page)
+		-Logout
+		-User
+		-My Plants
+	
+
+	-Home page / logged in
+		- Welcome message
+		- Fun facts/about
+
+	-Home page/ not yet logged in
+		- Fun facts/about
+		- Login/Signup

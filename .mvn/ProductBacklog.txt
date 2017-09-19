@@ -1,0 +1,42 @@
+PLANTLY
+
+FEATURES
+
+	-Login/Signup
+		-First name/Last name
+		-Email (registration verification) / used as username
+		-Password
+		-Location
+		-Forgotten password(Favorite plant) / recover button
+	-Startpage
+		-My Plants
+		
+			ADD/BUTTON REMOVE			
+			(nickname,type, group,last watered, soil, notes, photos, sunlight, poisoneous, location)
+
+	-Friends
+		-Somekind of plant community
+		-Send plants to friends
+		-
+		
+
+	-Notifications
+		- Telling you to water plant
+
+	-Fun facts
+
+	-Advertisment
+
+	-Mobile first / responsive
+
+	-Mascot
+
+	-Flora
+
+	-Plant cemetary
+
+	-PLANTLY HELPING THE WORLD GROW, GIVE MONEY TO CHARITY ( 99% + admin fees go to PLANTLY)
+
+
+
+

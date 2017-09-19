@@ -1,0 +1,616 @@
+/*CSS*/
+
+/*general css*/
+
+body {
+  margin-top: 50px;
+  background: #eee;
+  color: #20221D;
+  font-family: 'Cantarell', sans-serif;
+  overflow: hidden;
+  overflow-y: scroll;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+a {
+  color: #20221D;
+  font-weight: bolder;
+}
+
+a:hover {
+  color: hsl(110, 87%, 35%);
+}
+a:focus {
+  color: hsl(110, 87%, 35%);
+}
+
+.center {
+  text-align: center;
+}
+
+#form .infoWarning {
+  color: white;
+  text-align: center;
+  margin-top: 20px;
+}
+.bg-light {
+  background-color: #eee;
+}
+
+/*index.html*/
+
+.welcomeHeader {
+  padding: 20px;
+  font-size: 4em;
+  text-align: center;
+  color: #20221D;
+}
+
+#loginButton {
+  cursor: pointer;
+}
+
+svg {
+  width: 100%;
+  height: 100%;
+  bottom: 0%;
+  position: absolute;
+  z-index:-1;
+}
+
+@keyframes charFade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.char1, .char2, .char3, .char4, .char5, .char6 {
+  opacity: 0;
+  color: #20221D;
+}
+
+.char1 {
+  animation: charFade 2s;
+  animation-delay: 0;
+  animation-fill-mode: forwards;
+}
+
+.char2 {
+  animation: charFade 2s;
+  animation-delay: 0.1s;
+  animation-fill-mode: forwards;
+}
+
+.char3 {
+  animation: charFade 2s;
+  animation-delay: 0.2s;
+  animation-fill-mode: forwards;
+}
+
+.char4 {
+  animation: charFade 2s;
+  animation-delay: 0.3s;
+  animation-fill-mode: forwards;
+}
+
+.char5 {
+  animation: charFade 2s;
+  animation-delay: 0.4s;
+  animation-fill-mode: forwards;
+}
+
+.char6 {
+  animation: charFade 2s;
+  animation-delay: 0.5s;
+  animation-fill-mode: forwards;
+}
+
+/* LOGIN SIGN UP TABLE */
+
+.form *, *:before, *:after {
+  box-sizing: border-box;
+}
+
+.form html {
+  overflow-y: scroll;
+}
+
+.form a {
+  text-decoration: none;
+  color: #1ab188;
+  -webkit-transition: .5s ease;
+  transition: .5s ease;
+}
+
+.form a:hover {
+  color: #179b77;
+  cursor: pointer;
+}
+
+.form {
+  display: none;
+  background: rgba(19, 35, 47, 0.9);
+  padding: 30px;
+  max-width: 280px;
+  margin: 170px auto;
+  border-radius: 4px;
+  box-shadow: 0 4px 10px 4px rgba(19, 35, 47, 0.3);
+}
+
+.tab-group {
+  list-style: none;
+  padding: 0;
+}
+
+.tab-group:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+.tab-group li a {
+  display: block;
+  text-decoration: none;
+  padding: 15px;
+  background: rgba(160, 179, 176, 0.25);
+  color: #a0b3b0;
+  font-size: 20px;
+  float: left;
+  width: 50%;
+  text-align: center;
+  cursor: pointer;
+  -webkit-transition: .5s ease;
+  transition: .5s ease;
+}
+
+.change-pass-div {
+
+  margin: auto;
+
+}
+
+.tab-group li a:hover {
+  background: #179b77;
+  color: #ffffff;
+}
+
+.tab-group .active a {
+  background: #1ab188;
+  color: #ffffff;
+}
+
+.tab-content > div:first-child {
+  display: none;
+}
+
+.form h2 {
+  text-align: center;
+  color: #eee;
+  font-weight: 300;
+  margin: 0 0 20px;
+}
+
+.form label {
+  position: absolute;
+  -webkit-transform: translateY(6px);
+  transform: translateY(6px);
+  left: 13px;
+  color: rgba(255, 255, 255, 0.5);
+  -webkit-transition: all 0.25s ease;
+  transition: all 0.25s ease;
+  -webkit-backface-visibility: hidden;
+  pointer-events: none;
+  font-size: 15px;
+}
+.form label.req {
+  margin: 2px;
+  color: #1ab188;
+}
+
+.form label.active {
+  -webkit-transform: translateY(35px);
+  transform: translateY(35px);
+  left: 2px;
+  font-size: 12px;
+}
+.form label.active.req {
+  opacity: 0;
+}
+
+.form label.highlight {
+  color: #ffffff;
+}
+
+.form input, textarea {
+  font-size: 15px;
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 5px 10px;
+  background: none;
+  background-image: none;
+  border: 1px solid #a0b3b0;
+  color: #ffffff;
+  border-radius: 0;
+  -webkit-transition: border-color .25s ease, box-shadow .25s ease;
+  transition: border-color .25s ease, box-shadow .25s ease;
+}
+.form input:focus, textarea:focus {
+  outline: 0;
+  border-color: #1ab188;
+}
+
+.form textarea {
+  border: 2px solid #a0b3b0;
+  resize: vertical;
+}
+
+.field-wrap {
+  position: relative;
+  margin-bottom: 27px;
+}
+
+.top-row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+.top-row > div {
+  float: left;
+  width: 48%;
+  margin-right: 4%;
+}
+.top-row > div:last-child {
+  margin: 0;
+}
+
+.form .button {
+  border: 0;
+  outline: none;
+  border-radius: 0;
+  padding: 15px 0;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  background: #1ab188;
+  color: #ffffff;
+  -webkit-transition: all 0.5s ease;
+  transition: all 0.5s ease;
+  -webkit-appearance: none;
+}
+.form .button:hover, .button:focus {
+  background: #179b77;
+}
+
+.form .button-block {
+  display: block;
+  width: 100%;
+}
+
+.forgot {
+  margin-top: -20px;
+  text-align: right;
+}
+
+/*about.html*/
+.content-area {
+  padding: 15px;
+}
+.epic-about {
+  text-align: center;
+  margin: auto;
+  width: 70%;
+}
+.epic-about h1 h2 {
+  margin-bottom: 20px;
+}
+#footer {
+  text-align: center;
+  margin: 35px;
+  font-size: x-small;
+}
+.col-dev-team {
+  margin: 10px;
+  padding: 15px;
+  color: #20221D;
+  border-radius: 15px;
+  text-align: center;
+  width: 200px;
+  display: inline-block;
+}
+.img-flower {
+  margin-bottom: 15px;
+}
+
+/*plantinfo.html*/
+
+@import url(https://fonts.googleapis.com/css?family=Open+Sans);
+#circle-shape-example {
+  font-family: Open Sans, sans-serif;
+  margin: 2rem;
+}
+#circle-shape-example p {
+  line-height: 1.8;
+}
+#circle-shape-example .curve {
+  width: 33%; height: auto;
+  min-width: 150px;
+  float: left;
+  margin-right:2rem;
+  border-radius: 50%;
+  -webkit-shape-outside:circle();
+  shape-outside:circle();
+}
+
+#aboutPlant {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/*glyphicons*/
+
+.glyphicon-red {
+  color: #ff0000;
+}
+.glyphicon-blue {
+  color: #179b77;
+}
+.glyphicon-grey {
+  color: hsl(0, 0%, 55%);
+}
+
+.glyphicon-yellow {
+  color: hsl(60, 100%, 30%);
+}
+
+.glyphicon-green {
+  color: #37EF11;
+}
+
+/*Navbar*/
+
+.navbar-toggle .icon-bar {
+  color: #20221D;
+  background-color: #fff;
+}
+
+.navbar-toggle {
+  background-color: transparent;
+}
+.dropdown-menu {
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border: 1px solid rgba(0, 0, 0, .15);
+  border-radius: 8px;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+  -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
+}
+
+.dropdown-menu > li > a {
+  color: #20221D;
+}
+
+.dropdown-menu > li > a:hover, .dropdown-menu > li > a:focus {
+  color: hsl(110, 87%, 35%);
+  text-decoration: none;
+  background-color: transparent;
+}
+
+.nav > li > a {
+  text-align: right;
+  position: relative;
+  display: block;
+  padding: 10px 15px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.navbar {
+  padding-top: 10px;
+}
+
+@media (min-width: 450px) {
+  .navbar {
+    padding-left: 10%;
+    padding-right: 10%;
+  }
+  .content-padding {
+    padding-right: 12%;
+    padding-left: 12%;
+  }
+
+}
+@media (max-width: 450px) {
+  .navbar {
+    padding-right: 5%;
+  }
+  .content-padding {
+    padding-right: 5%;
+    padding-left: 5%;
+  }
+  .navbar-nav .open .dropdown-menu {
+    float: right;
+    text-align: right;
+  }
+}
+
+/*MY PLANTLY FORM*/
+
+.my-plantly-form *, *:before, *:after {
+  box-sizing: border-box;
+}
+
+.my-plantly-form html {
+  overflow-y: scroll;
+}
+
+.my-plantly-form a {
+  text-decoration: none;
+  color: #1ab188;
+  -webkit-transition: .5s ease;
+  transition: .5s ease;
+}
+
+.my-plantly-form a:hover {
+  color: #179b77;
+  cursor: pointer;
+}
+
+.my-plantly-form {
+  background: rgba(19, 35, 47, 0.9);
+  padding: 30px;
+  margin-top: 40px;
+  margin-bottom: auto;
+  border-radius: 4px;
+  box-shadow: 0 4px 10px 4px rgba(19, 35, 47, 0.3);
+  color: #ccc;
+}
+
+.my-plantly-form h2 {
+  text-align: center;
+  color: #eee;
+  font-weight: 300;
+  margin: 0 0 20px;
+}
+
+.my-plantly-form label {
+  color: #fff;
+}
+.my-plantly-form label.req {
+  margin: 2px;
+  color: #1ab188;
+}
+
+.my-plantly-form label.active {
+  -webkit-transform: translateY(35px);
+  transform: translateY(35px);
+  left: 2px;
+  font-size: 12px;
+}
+.my-plantly-form label.active.req {
+  opacity: 0;
+}
+
+.my-plantly-form label.highlight {
+  color: #ffffff;
+}
+
+.my-plantly-form input, textarea {
+  font-size: 15px;
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 5px 10px;
+  background: none;
+  background-image: none;
+  border: 1px solid #a0b3b0;
+  color: #ffffff;
+  border-radius: 0;
+  -webkit-transition: border-color .25s ease, box-shadow .25s ease;
+  transition: border-color .25s ease, box-shadow .25s ease;
+}
+.my-plantly-form input:focus, textarea:focus {
+  outline: 0;
+  border-color: #1ab188;
+}
+
+.my-plantly-form textarea {
+  border: 2px solid #a0b3b0;
+  resize: vertical;
+}
+
+#my-plantly-form-addbutton {
+    margin-bottom: 20px;
+}
+
+#my-plantly-form-resetbutton {
+    margin-bottom: 20px;
+    margin-top: 20px;
+}
+
+.my-plantly-form .button {
+  border: 0;
+  outline: none;
+  border-radius: 0;
+  padding: 15px 0;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  background: #1ab188;
+  color: #ffffff;
+  -webkit-transition: all 0.5s ease;
+  transition: all 0.5s ease;
+  -webkit-appearance: none;
+}
+
+.water-button {
+  font-size: smaller;
+  border: 0;
+  outline: none;
+  border-radius: 0;
+  padding: 5px 8px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  background: #1ab188;
+  color: #ffffff;
+  -webkit-transition: all 0.5s ease;
+  transition: all 0.5s ease;
+  -webkit-appearance: none;
+}
+.water-button a {
+color: white;
+}
+.water-button:hover {
+
+  background: #179b77;
+}
+.my-plantly-form .button:hover, .button:focus {
+  background: #179b77;
+}
+.my-plantly-form .button-block {
+  display: block;
+  width: 100%;
+}
+
+.my-plantly-add-div {
+  margin-right: 10px;
+}
+
+.ui-menu-item {
+   cursor: pointer;
+   background-color: #fff;
+   max-width: 200px;
+   display: block;
+   /*overflow: visible;*/
+   padding: 5px 20px;
+   clear: both;
+   font-weight: normal;
+   line-height: 1.42857143;
+   color: #333;
+ }
+
+.ui-menu-item:hover {
+  color: hsl(110, 87%, 35%);
+}
+
+.ui-menu-item:focus {
+  color: hsl(110, 87%, 35%);
+}
+
+.ui-helper-hidden-accessible {
+  visibility: hidden;
+}
+.needs-water{
+  text-align: center;
+  font-size: 18px;
+}

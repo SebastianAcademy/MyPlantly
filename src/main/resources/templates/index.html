@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+  <link rel="icon" type="image/ico" href="images/favIcon.ico"/>
+  <link href="https://fonts.googleapis.com/css?family=Cantarell" rel="stylesheet"/>
+  <link href='https://fonts.googleapis.com/css?family=Titillium+Web:400,300,600' rel='stylesheet' type='text/css'/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css"/>
+  <meta charset="utf-8"/>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+  <title>HOME | PLANTLY</title>
+
+  <!-- Bootstrap -->
+  <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css"/>
+  <link rel="stylesheet" href="/css/style.css"/>
+
+
+</head>
+
+<body>
+
+<!-- Nav -->
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light navbar-fixed-top">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="glyphicon glyphicon-menu-hamburger" aria-hidden="true"></span>
+      </button>
+      <a class="navbar-brand" href="/"><img src="/images/plantlyLogoBlack.png" height="31" width="117"/></a>
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+
+
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="/about">about</a></li>
+
+        <li>
+          <a class="nav-link" id="loginButton" th:unless="${session.user}" th:text="'log in'"></a>
+        </li>
+
+        <li class="dropdown">
+          <a href="user" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+             aria-expanded="false"
+             th:if="${session.user}" th:text="${session.user.firstname} + ' &dtrif; ' "></a>
+          <ul class="dropdown-menu">
+            <li><a href="user"><span class="glyphicon glyphicon-grain" aria-hidden="true"></span> | my plantly</a></li>
+            <li role="separator" class="divider"></li>
+            <li><a href="#"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span> | change password</a></li>
+            <li><a href="logout"><span class="glyphicon glyphicon-off" aria-hidden="true"></span> | log out</a></li>
+          </ul>
+        </li>
+
+      </ul>
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+
+<!--LOGIN/SIGNUP FORM -->
+
+<div class="form" id="form">
+
+  <ul class="tab-group">
+    <li class="tab active" id="loginTab"><a href="#login">log in</a></li>
+    <li class="tab" id="signupTab"><a href="#signup">sign  up</a></li>
+  </ul>
+
+  <div class="tab-content">
+    <div id="signup">
+      <h2>Save your plants!</h2>
+
+      <form action="/signup" method="post">
+
+        <div class="top-row">
+          <div class="field-wrap">
+            <label>
+              first name<span class="req">*</span>
+            </label>
+            <input type="text" name="firstname" required="required" autocomplete="off"  maxlength="30" title="Type your first name maximum 30 characters"
+                   oninvalid="this.setCustomValidity('First name required')" oninput="setCustomValidity('')"/>
+          </div>
+
+          <div class="field-wrap">
+            <label>
+              last name<span class="req">*</span>
+            </label>
+            <input type="text" name="lastname" required="required" autocomplete="off"  maxlength="30" title="Type in your last name maximum 30 characters"
+                   oninvalid="this.setCustomValidity('Last name required')" oninput="setCustomValidity('')"/>
+          </div>
+        </div>
+
+        <div class="field-wrap">
+          <label>
+            email<span class="req">*</span>
+          </label>
+          <input type="email" name="email" required="required" autocomplete="off" maxlength="35" title="Type your email maximum 35 characters"
+                 oninvalid="this.setCustomValidity('Invalid email')" oninput="setCustomValidity('')"/>
+        </div>
+
+        <div class="field-wrap">
+          <label>
+            set password<span class="req">*</span>
+          </label>
+          <input type="password" name="password" required="required" autocomplete="off" maxlength="30" title="Set your password maximum 30 characters"
+                 oninvalid="this.setCustomValidity('Invalid password')" oninput="setCustomValidity('')"/>
+        </div>
+
+        <button type="submit" value="Sign up" class="button button-block">get started</button>
+        <div class="infoWarning" th:if="${infoSignup} != 'Ok'" th:text="${infoSignup}"></div>
+      </form>
+
+    </div>
+
+    <div id="login">
+      <h2>Welcome Back!</h2>
+
+      <form action="/user" method="post">
+
+        <div class="field-wrap">
+          <label>
+            email<span class="req">*</span>
+          </label>
+          <input class="theTooltip" type="email" name="email" required="required" autocomplete="off" maxlength="35" title="Type your email maximum 35 characters"
+                 oninvalid="this.setCustomValidity('Invalid email')" oninput="setCustomValidity('')"/>
+        </div>
+
+        <div class="field-wrap">
+          <label>
+            password<span class="req">*</span>
+          </label>
+          <input type="password" name="password" required="required" autocomplete="off" maxlength="30" title="Type your password maximum 30 characters"
+                 oninvalid="this.setCustomValidity('Type your password')" oninput="setCustomValidity('')"/>
+        </div>
+
+        <button class="button button-block" type="submit" value="Login">Log In</button>
+        <div class="infoWarning" th:if="${infoLogin} != 'Ok'" th:text="${infoLogin}"></div>
+      </form>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-12"><h1 class="welcomeHeader" id="randomHeader"></h1></div>
+  </div>
+</div>
+
+<svg id="svgplants" width="100%" height="100%" viewbox="0 0 900 800" preserveAspectRatio="yes">
+  <g id="stems" fill="none" stroke="#042415"></g>
+  <g id="leaves"></g>
+</svg>
+
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="/bootstrap/js/bootstrap.min.js"></script>
+<script src='http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+<script src='http://cdnjs.cloudflare.com/ajax/libs/gsap/1.18.0/TweenMax.min.js'></script>
+<script src='http://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.9.3/lodash.min.js'></script>
+<script src='http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+<script src="/js/index.js"></script>
+<script src="/js/table.js"></script>
+<script th:if="${infoLogin != null}">
+    $("#form").show();
+    $("#randomHeader").hide();
+</script>
+<script th:if="${infoSignup != null}">
+    $("#form").show();
+    $("#randomHeader").hide();
+    $("#login").hide();
+    $("#signup").show();
+</script>
+</body>
+</html>
