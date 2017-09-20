@@ -43,9 +43,7 @@ public class DBController {
         }
         DBConnection.addUser(email, firstname, lastname, password);
         User user = DBConnection.getCurrentUser(email, password);
-        List<UserPlant> userPlantList = DBConnection.getUserPlantsInfo(user.getUserId());
         session.setAttribute("user", user);
-        session.setAttribute("userPlantsList", userPlantList);
         return new ModelAndView("userpage");
     }
 
@@ -53,29 +51,18 @@ public class DBController {
     public ModelAndView loggedin(@RequestParam String email, @RequestParam String password, HttpSession session, Model model) {
         boolean userExists = DBConnection.userExists(email, password);
         User user = DBConnection.getCurrentUser(email, password);
-
         if(userExists) {
             List<UserPlant> userPlantList = DBConnection.getUserPlantsInfo(user.getUserId());
             session.setAttribute("user", user);
             session.setAttribute("userPlantsList", userPlantList);
-            List<LocalDate> listOfWDays = DBConnection.getAllWDays(user.getUserId());
-            System.out.println(listOfWDays);
-
             LocalDate from = LocalDate.now();
-            LocalDate to = null;
-            long diff = 0;
+            System.out.println(from);
+            /*if(!userPlantList.get(0).regDate.equals(from)){
 
-            for(int i=0; i<userPlantList.size(); i++) {
-                to = userPlantList.get(i).waterDate.toLocalDateTime().toLocalDate();
-                diff = ChronoUnit.DAYS.between(LocalDate.parse(from.toString()),LocalDate.parse(to.toString()));
-                System.out.println(diff + " " +  from + " " + to);
-                userPlantList.get(i).daysLeft = diff;
-            }
-
+            }*/
             return new ModelAndView("userpage");
         }
         return new ModelAndView("index").addObject("infoLogin", "Invalid email or password!");
-
     }
 
     @GetMapping("/user")
@@ -85,16 +72,7 @@ public class DBController {
             List<UserPlant> userPlantList = DBConnection.getUserPlantsInfo(user.getUserId());
 
             LocalDate from = LocalDate.now();
-            LocalDate to = null;
             long diff = 0;
-
-            for(int i=0; i<userPlantList.size(); i++) {
-                to = userPlantList.get(i).waterDate.toLocalDateTime().toLocalDate();
-                diff = ChronoUnit.DAYS.between(LocalDate.parse(from.toString()),LocalDate.parse(to.toString()));
-                System.out.println(diff + " " +  from + " " + to);
-                userPlantList.get(i).daysLeft = diff;
-            }
-
             session.setAttribute("userPlantsList", userPlantList);
             return new ModelAndView("userpage").addObject("userPlantsList", userPlantList);
         }
@@ -113,12 +91,8 @@ public class DBController {
             User user = (User) session.getAttribute("user");
             if (user.getPassword().equals(oldPassword)) {
                 DBConnection.changePassword(user.getUserId(), newPassword);
-                //model.addAttribute("info", "Password has been changed");
-                //return "changePassword";
                 return new ModelAndView("changePassword").addObject("info", "Password has been changed");
             } else {
-                //model.addAttribute("info", "Wrong password!");
-                //return "changePassword";
                 return new ModelAndView("changePassword").addObject("info", "Incorrect old password!");
             }
         }
@@ -160,33 +134,14 @@ public class DBController {
     @PostMapping("/addUserPlant")
     public ModelAndView addUserPlant(@RequestParam String nickName, @RequestParam String plantSpecies, @RequestParam int userId, HttpSession session){
         boolean nickNameExists = DBConnection.nickNameAlreadyExists(nickName, userId);
-
-        int plantID = DBConnection.getPlantIdFromPlants(plantSpecies);
-        int wdays = DBConnection.getWateringDays(plantID);
-
+        User user = (User)session.getAttribute("user");
         LocalDate regdate = LocalDate.now();
-        LocalDate futureDate = new java.sql.Date(Calendar.getInstance().getTimeInMillis()).toLocalDate().plusDays(wdays);
-
-
 
         if(!nickNameExists){
-
-            DBConnection.addPlantToUserPlants(nickName, "needs a image URL", userId, plantSpecies, java.sql.Date.valueOf(regdate), java.sql.Date.valueOf(futureDate));
+            DBConnection.addPlantToUserPlants(nickName, "needs a image URL", userId, plantSpecies, java.sql.Date.valueOf(regdate));
             List<UserPlant> userPlantList = DBConnection.getUserPlantsInfo(userId);
-
-            LocalDate from = LocalDate.now();
-            LocalDate to = null;
-            long diff = 0;
-
-            for(int i=0; i<userPlantList.size(); i++) {
-                to = userPlantList.get(i).waterDate.toLocalDateTime().toLocalDate();
-                diff = ChronoUnit.DAYS.between(LocalDate.parse(from.toString()),LocalDate.parse(to.toString()));
-                System.out.println(diff + " " +  from + " " + to);
-                userPlantList.get(i).daysLeft = diff;
-            }
             session.setAttribute("userPlantsList", userPlantList);
             return new ModelAndView("userpage");
-
 
         }
         return new ModelAndView("userpage").addObject("warning", "Nickname already exists!");
@@ -198,29 +153,11 @@ public class DBController {
         return DBConnection.getPlantName();
     }
 
-    @RequestMapping(path = "/GETD", method = RequestMethod.GET)
-    @ResponseBody
-    public List<Integer> getDAYS(HttpSession session){
-        User user = (User)session.getAttribute("user");
-
-        return DBConnection.getDays(user.getUserId());
-    }
 
     @GetMapping("/deletePlant/{nickName}")
     public String deletePlant(@PathVariable String nickName, HttpSession session){
         User user =  (User) session.getAttribute("user");
         DBConnection.deletePlantFromUserPlants(nickName, user.getUserId());
-        return "redirect:/user";
-    }
-
-    @GetMapping ("/updateWateringDays/{usersPlantsID}/{plantSpecies}")
-    public String updateDates(@PathVariable String usersPlantsID, @PathVariable String plantSpecies) {
-       // LocalDate wateredDay = DBConnection.getWateredDay(usersPlantsID);
-        LocalDate wateredDay = LocalDate.now();
-        int plantID = DBConnection.getPlantIdFromPlants(plantSpecies);
-        int wdays = DBConnection.getWateringDays(plantID);
-        LocalDate futureDate = wateredDay.plusDays(wdays);
-        DBConnection.updateDates(usersPlantsID, wateredDay, futureDate);
         return "redirect:/user";
     }
 

@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
 import java.sql.*;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.sql.Connection;
@@ -21,11 +20,8 @@ import java.sql.SQLException;
 @Component
 public class DBRepository implements PlantyDBRepository {
 
-    //@SuppressWarnings("SpringJavaAutowiringInspection")
-
     @Autowired
     private DataSource dataSource;
-
 
     @Override
     public boolean userExists(String email, String password) {
@@ -106,7 +102,6 @@ public class DBRepository implements PlantyDBRepository {
         return new String(rs.getString("PlantSpecies"));
     }
 
-
     @Override
     public Plant getPlantByPlantSpecies (String plantSpecies){
         try(Connection conn = dataSource.getConnection();
@@ -160,18 +155,20 @@ public class DBRepository implements PlantyDBRepository {
         }
         return false;
     }
+
     @Override
-    public void addPlantToUserPlants(String nickName, String photo, int userId, String plantSpecies, java.sql.Date regDate, java.sql.Date waterDate){
+    public void addPlantToUserPlants(String nickName, String photo, int userId, String plantSpecies, Date regDate){
         int plantId = getPlantIdFromPlants(plantSpecies);
+        int defaultWateringDays = getDaysUntilWateringFromPlants(plantSpecies);
         if(plantId != 0){
             try (Connection conn = dataSource.getConnection();
-                 PreparedStatement ps = conn.prepareStatement("INSERT INTO UsersPlants(UserID, NickName, Photo, PlantID, RegistrationDate, WateringDate) VALUES(?,?,?,?,?,?)")) {
+                 PreparedStatement ps = conn.prepareStatement("INSERT INTO UsersPlants(UserID, NickName, Photo, PlantID, RegistrationDate, WaterDaysLeft) VALUES(?,?,?,?,?,?)")) {
                 ps.setInt(1, userId);
                 ps.setString(2, nickName);
                 ps.setString(3, photo);
                 ps.setInt(4, plantId);
                 ps.setDate(5, regDate);
-                ps.setDate(6, waterDate);
+                ps.setInt(6, defaultWateringDays);
                 ps.executeUpdate();
             } catch (SQLException e) {
                 System.out.println("Add plant to User exception: " + e.getMessage());
@@ -179,106 +176,23 @@ public class DBRepository implements PlantyDBRepository {
         }
     }
 
-
-
-
-
-    /* DELETE PLANT FROM USER DB */
-
-    public void deletePlantFromUserPlants(String nickName, int userId) {
-        if(nickName != null){
-            try (Connection conn = dataSource.getConnection();
-                 PreparedStatement ps = conn.prepareStatement("DELETE FROM UsersPlants WHERE NickName = ? AND UserID = ?")) {
-                ps.setString(1,nickName);
-                ps.setInt(2, userId);
-                ps.executeUpdate();
-            } catch (SQLException e) {
-                System.out.println("Delete plant from User exception: " + e.getMessage());
-            }
-        }
-    }
-
-    @Override
-    public LocalDate getWateredDay(String usersPlantsID) {
-        int userPlantsID = Integer.parseInt(usersPlantsID);
-
+    private int getDaysUntilWateringFromPlants(String plantSpecies) {
         try(Connection conn = dataSource.getConnection();
-            PreparedStatement ps = conn.prepareStatement("select WateringDate from [UsersPlants] where UsersPlantsID = ?")) {
-            ps.setInt(1, userPlantsID);
+            PreparedStatement ps = conn.prepareStatement("SELECT DaysUntilWatering FROM Plants WHERE PlantSpecies = ?")) {
+            ps.setString(1, plantSpecies);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    LocalDate nextWater = (rs.getDate("WateringDate")).toLocalDate();
-                    return nextWater;
+                    int daysUntilWatering = rs.getInt("DaysUntilWatering");
+                    return daysUntilWatering;
                 }
             }catch(SQLException e){
-                return null;
+                return 0;
             }
         }catch (SQLException e){
             throw new PlantyRepositoryException(e);
         }
-        return null;
+        return 0;
     }
-
-    @Override
-    public void updateDates(String usersPlantsID, LocalDate wateredDay, LocalDate futureDate) {
-        int parsedDate = Integer.parseInt(usersPlantsID);
-
-        try(Connection conn = dataSource.getConnection();
-            PreparedStatement ps = conn.prepareStatement("UPDATE [UsersPlants]  SET RegistrationDate = ? , WateringDate = ? WHERE UsersPlantsID = ?")) {
-            ps.setDate(1, java.sql.Date.valueOf( wateredDay ));
-            ps.setDate(2, java.sql.Date.valueOf( futureDate ) );
-            ps.setInt(3, parsedDate);
-            ps.executeUpdate();
-        }catch(SQLException e){
-            System.out.println(e.getMessage() );
-        }
-
-    }
-
-    @Override
-    public List<LocalDate> getAllWDays(int userID) {
-        try(Connection conn = dataSource.getConnection();
-            PreparedStatement ps = conn.prepareStatement(" select WateringDate from [UsersPlants] where UserID = ? order by WateringDate")) {
-            ps.setInt(1, userID);
-            List<LocalDate> listofNextWDays = new ArrayList<>();
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()){
-                listofNextWDays.add(rsListofDates(rs));
-            }
-            return listofNextWDays;
-        } catch (SQLException e) {
-            throw new PlantyRepositoryException(e);
-        }
-
-    }
-
-    private LocalDate rsListofDates(ResultSet rs) throws SQLException {
-        return ((rs.getDate("WateringDate")).toLocalDate());
-    }
-
-
-
-    public List<Integer> getDays(int userID) {
-        try(Connection conn = dataSource.getConnection();
-            PreparedStatement ps = conn.prepareStatement("select A.PlantID, B.DaysUntilWatering from [UsersPlants] as A\n" +
-                    "inner join [Plants] as B on A.PlantID=B.PlantID where A.UserID=?;")) {
-            ps.setInt(1, userID);
-            List<Integer> days = new ArrayList<>();
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()){
-                days.add(rsDays(rs));
-            }
-            return days;
-        } catch (SQLException e) {
-            throw new PlantyRepositoryException(e);
-        }
-
-    }
-
-    private Integer rsDays(ResultSet rs) throws SQLException {
-        return new Integer(rs.getInt("DaysUntilWatering"));
-    }
-
 
     public int getPlantIdFromPlants(String plantSpecies){
         try(Connection conn = dataSource.getConnection();
@@ -298,44 +212,35 @@ public class DBRepository implements PlantyDBRepository {
         return 0;
     }
 
-    public int getWateringDays(int plantID) {
-        int wateringDays =0;
-        try(Connection conn = dataSource.getConnection();
-            PreparedStatement ps = conn.prepareStatement("select DaysUntilWatering from [Plants] where PlantID=?;"))
-        {
-            ps.setInt(1, plantID);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                     wateringDays = rs.getInt("DaysUntilWatering");
-                    return wateringDays;
-                }
-            }catch(SQLException e){
-                System.out.println(e.getMessage());
-                return 0;
+    /* DELETE PLANT FROM USER DB */
+
+    public void deletePlantFromUserPlants(String nickName, int userId) {
+        if(nickName != null){
+            try (Connection conn = dataSource.getConnection();
+                 PreparedStatement ps = conn.prepareStatement("DELETE FROM UsersPlants WHERE NickName = ? AND UserID = ?")) {
+                ps.setString(1,nickName);
+                ps.setInt(2, userId);
+                ps.executeUpdate();
+            } catch (SQLException e) {
+                System.out.println("Delete plant from User exception: " + e.getMessage());
             }
-        }catch (SQLException e){
-            throw new PlantyRepositoryException(e);
         }
-        return wateringDays;
     }
-
-
 
     @Override
     public List<UserPlant> getUserPlantsInfo(int userId) {
         List<UserPlant> userPlantList = new ArrayList<>();
         try (Connection conn = dataSource.getConnection();
-             PreparedStatement ps = conn.prepareStatement("SELECT UsersPlantsID, NickName, PlantSpecies, Poisonous, DaysUntilWatering, LightNeeded, WateringDate " +
+             PreparedStatement ps = conn.prepareStatement("SELECT UsersPlantsID, NickName, PlantSpecies, Poisonous, DaysUntilWatering, LightNeeded, RegistrationDate, WaterDaysLeft " +
                      "FROM UsersPlants " +
                      "JOIN Plants " +
                      "ON UsersPlants.PlantID = Plants.PlantID " +
                      "WHERE UserID = ? " +
-                     "ORDER BY DaysUntilWatering")) {
+                     "ORDER BY WaterDaysLeft")) {
             ps.setInt(1, userId);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     userPlantList.add(rsUserPlant(rs));
-
                 }
             } catch (SQLException e){
                 System.out.println("Get user plants info exception: " + e.getMessage());
@@ -353,6 +258,7 @@ public class DBRepository implements PlantyDBRepository {
                rs.getString("LightNeeded"),
                rs.getInt("DaysUntilWatering"),
                rs.getString("Poisonous"),
-               (rs.getTimestamp("WateringDate")));
+               (rs.getTimestamp("RegistrationDate")),
+               rs.getInt("WaterDaysLeft"));
     }
 }

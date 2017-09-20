@@ -10,8 +10,7 @@ public class UserPlant {
     public int waterDays;
     public String poison;
     public java.sql.Timestamp regDate;
-    public java.sql.Timestamp waterDate;
-    public long daysLeft;
+    public int waterDaysLeft;
 
 
 
@@ -30,28 +29,28 @@ public class UserPlant {
         this.waterDays = waterDays;
         this.poison = poison;
         this.regDate = regDate;
-        this.waterDate = waterDate;
 
     }
 
-    public UserPlant(int UsersPlantsID, String nickName, String plantSpecies, String lightNeeded, int waterDays, String poison) {
+    public UserPlant(int UsersPlantsID, String nickName, String plantSpecies, String lightNeeded, int daysLeft, String poison) {
         this.UsersPlantsID = UsersPlantsID;
         this.nickName = nickName;
         this.plantSpecies = plantSpecies;
         this.lightNeeded = lightNeeded;
-        this.waterDays = waterDays;
+        this.waterDaysLeft = daysLeft;
         this.poison = poison;
 
     }
 
 
-    public UserPlant(int usersPlantsID, String nickName, String plantSpecies, String lightNeeded, int waterDays, String poison, Timestamp waterDate) {
+    public UserPlant(int usersPlantsID, String nickName, String plantSpecies, String lightNeeded, int waterDays, String poison, Timestamp regDate, int waterDaysLeft) {
         UsersPlantsID = usersPlantsID;
         this.nickName = nickName;
         this.plantSpecies = plantSpecies;
         this.lightNeeded = lightNeeded;
         this.waterDays = waterDays;
         this.poison = poison;
-        this.waterDate = waterDate;
+        this.regDate = regDate;
+        this.waterDaysLeft = waterDaysLeft;
     }
 }
