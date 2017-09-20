@@ -176,6 +176,21 @@ public class DBRepository implements PlantyDBRepository {
         }
     }
 
+    @Override
+    public void resetWaterDaysLeft(int usersPlantsID, Date regDate, int defaultWateringDays){
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement ps = conn.prepareStatement("UPDATE UsersPlants " +
+                     "SET WaterDaysLeft = ?, RegistrationDate = ? " +
+                     "WHERE UsersPlantsID = ?")){
+            ps.setInt(1, defaultWateringDays);
+            ps.setDate(2, regDate);
+            ps.setInt(3,usersPlantsID);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("Reset Water Days Left exception: " + e.getMessage());
+        }
+    }
+
     private int getDaysUntilWateringFromPlants(String plantSpecies) {
         try(Connection conn = dataSource.getConnection();
             PreparedStatement ps = conn.prepareStatement("SELECT DaysUntilWatering FROM Plants WHERE PlantSpecies = ?")) {
@@ -214,12 +229,11 @@ public class DBRepository implements PlantyDBRepository {
 
     /* DELETE PLANT FROM USER DB */
 
-    public void deletePlantFromUserPlants(String nickName, int userId) {
-        if(nickName != null){
+    public void deletePlantFromUserPlants(int usersPlantsID) {
+        if(usersPlantsID > 0){
             try (Connection conn = dataSource.getConnection();
-                 PreparedStatement ps = conn.prepareStatement("DELETE FROM UsersPlants WHERE NickName = ? AND UserID = ?")) {
-                ps.setString(1,nickName);
-                ps.setInt(2, userId);
+                 PreparedStatement ps = conn.prepareStatement("DELETE FROM UsersPlants WHERE UsersPlantsID = ?")) {
+                ps.setInt(1, usersPlantsID);
                 ps.executeUpdate();
             } catch (SQLException e) {
                 System.out.println("Delete plant from User exception: " + e.getMessage());
@@ -258,7 +272,7 @@ public class DBRepository implements PlantyDBRepository {
                rs.getString("LightNeeded"),
                rs.getInt("DaysUntilWatering"),
                rs.getString("Poisonous"),
-               (rs.getTimestamp("RegistrationDate")),
+               (rs.getDate("RegistrationDate")),
                rs.getInt("WaterDaysLeft"));
     }
 }

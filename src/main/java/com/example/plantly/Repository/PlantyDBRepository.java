@@ -5,7 +5,6 @@ import com.example.plantly.Domain.User;
 import com.example.plantly.Domain.UserPlant;
 
 import java.sql.Date;
-import java.time.LocalDate;
 import java.util.List;
 
 public interface PlantyDBRepository {
@@ -19,5 +18,6 @@ public interface PlantyDBRepository {
     boolean nickNameAlreadyExists(String nickName, int userId);
     void changePassword(int userId, String newPassword);
     List<String> getPlantName();
-    void deletePlantFromUserPlants(String nickName, int userId);
+    void deletePlantFromUserPlants(int usersPlantsID);
+    void resetWaterDaysLeft(int usersPlantsID, Date regDate, int defaultWateringDays);
 }

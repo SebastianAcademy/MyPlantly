@@ -13,9 +13,13 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.nio.file.Path;
+import java.time.DateTimeException;
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
-import java.util.Calendar;
+
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.Date;
 import java.util.List;
 
 @Controller
@@ -52,29 +56,30 @@ public class DBController {
         boolean userExists = DBConnection.userExists(email, password);
         User user = DBConnection.getCurrentUser(email, password);
         if(userExists) {
-            List<UserPlant> userPlantList = DBConnection.getUserPlantsInfo(user.getUserId());
             session.setAttribute("user", user);
-            session.setAttribute("userPlantsList", userPlantList);
-            LocalDate from = LocalDate.now();
-            System.out.println(from);
-            /*if(!userPlantList.get(0).regDate.equals(from)){
-
-            }*/
+            setSessionUserPlantsList(session);
             return new ModelAndView("userpage");
         }
         return new ModelAndView("index").addObject("infoLogin", "Invalid email or password!");
     }
 
+    private void countdownWateringDays (List<UserPlant> userPlantList){
+        ZonedDateTime startOfToday = LocalDate.now().atStartOfDay(ZoneId.systemDefault());
+        long todayMs = startOfToday.toEpochSecond() * 1000;
+        for(int i=0;i<userPlantList.size();i++){
+            if(userPlantList.get(i).regDate.getTime() > todayMs){
+
+            }
+        }
+    }
+
     @GetMapping("/user")
     public ModelAndView userpage(HttpSession session) {
         if (session.getAttribute("user") != null) {
-            User user = (User)session.getAttribute("user");
-            List<UserPlant> userPlantList = DBConnection.getUserPlantsInfo(user.getUserId());
-
             LocalDate from = LocalDate.now();
             long diff = 0;
-            session.setAttribute("userPlantsList", userPlantList);
-            return new ModelAndView("userpage").addObject("userPlantsList", userPlantList);
+            setSessionUserPlantsList(session);
+            return new ModelAndView("userpage");
         }
         return new ModelAndView("redirect:/");
     }
@@ -124,27 +129,32 @@ public class DBController {
         return "addplant";
     }
 
-    @PostMapping("/updateSql")
-    public ModelAndView updateDates(HttpSession session) {
-        User user = (User)session.getAttribute("user");
-        
-        return new ModelAndView("userpage");
-    }
 
     @PostMapping("/addUserPlant")
     public ModelAndView addUserPlant(@RequestParam String nickName, @RequestParam String plantSpecies, @RequestParam int userId, HttpSession session){
         boolean nickNameExists = DBConnection.nickNameAlreadyExists(nickName, userId);
-        User user = (User)session.getAttribute("user");
         LocalDate regdate = LocalDate.now();
 
         if(!nickNameExists){
             DBConnection.addPlantToUserPlants(nickName, "needs a image URL", userId, plantSpecies, java.sql.Date.valueOf(regdate));
-            List<UserPlant> userPlantList = DBConnection.getUserPlantsInfo(userId);
-            session.setAttribute("userPlantsList", userPlantList);
+            setSessionUserPlantsList(session);
             return new ModelAndView("userpage");
 
         }
         return new ModelAndView("userpage").addObject("warning", "Nickname already exists!");
+    }
+
+    @GetMapping("/watering/{usersPlantsID}/{waterDays}")
+    public String resetWaterDaysLeft(@PathVariable int usersPlantsID, @PathVariable int waterDays){
+        LocalDate regdate = LocalDate.now();
+        DBConnection.resetWaterDaysLeft(usersPlantsID, java.sql.Date.valueOf(regdate), waterDays);
+        return "redirect:/user";
+    }
+
+    private void setSessionUserPlantsList(HttpSession session){
+        User user = (User)session.getAttribute("user");
+        List<UserPlant> userPlantList = DBConnection.getUserPlantsInfo(user.getUserId());
+        session.setAttribute("userPlantsList", userPlantList);
     }
 
     @RequestMapping(path = "/GET", method = RequestMethod.GET)
@@ -154,10 +164,9 @@ public class DBController {
     }
 
 
-    @GetMapping("/deletePlant/{nickName}")
-    public String deletePlant(@PathVariable String nickName, HttpSession session){
-        User user =  (User) session.getAttribute("user");
-        DBConnection.deletePlantFromUserPlants(nickName, user.getUserId());
+    @GetMapping("/deletePlant/{usersPlantsID}")
+    public String deletePlant(@PathVariable int usersPlantsID){
+        DBConnection.deletePlantFromUserPlants(usersPlantsID);
         return "redirect:/user";
     }
 

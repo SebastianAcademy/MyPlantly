@@ -126,12 +126,12 @@
                         <!--<td th:if="${plantInfo.waterDaysLeft} == 1 || ${plantInfo.waterDaysLeft} == 0" data-th="Needs water in " th:text="${plantInfo.waterDaysLeft} + ' day'"></td>
                         <td th:if="${plantInfo.waterDaysLeft} < 0" data-th="You should have watered for " th:text="${plantInfo.waterDaysLeft} + ' days ago'"></td>-->
                         <td data-th="Water Plant">
-                            <a th:href="'/updateWateringDays/' + ${plantInfo.UsersPlantsID} + '/' +  ${plantInfo.plantSpecies}">
+                            <a th:href="'/watering/' + ${plantInfo.UsersPlantsID} + '/' +  ${plantInfo.waterDays}">
                                 <button class="water-button">Water</button>
                             </a>
                         </td>
 
-                        <td data-th="Remove"><a th:href="'/deletePlant/' + ${plantInfo.nickName}">
+                        <td data-th="Remove"><a th:href="'/deletePlant/' + ${plantInfo.UsersPlantsID}">
                             <span class="glyphicon glyphicon-remove glyphicon-red" aria-hidden="true"></span>
                         </a>
 
