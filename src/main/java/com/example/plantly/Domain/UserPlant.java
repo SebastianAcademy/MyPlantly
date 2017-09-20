@@ -1,6 +1,8 @@
 package com.example.plantly.Domain;
 
 import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.util.Date;
 
 public class UserPlant {
     public int UsersPlantsID;
@@ -9,7 +11,7 @@ public class UserPlant {
     public String lightNeeded;
     public int waterDays;
     public String poison;
-    public java.sql.Timestamp regDate;
+    public Date regDate;
     public int waterDaysLeft;
 
 
@@ -22,7 +24,7 @@ public class UserPlant {
         this.poison = poison;
     }
 
-    public UserPlant(String nickName, String plantSpecies, String lightNeeded, int waterDays, String poison, Timestamp regDate, Timestamp waterDate) {
+    public UserPlant(String nickName, String plantSpecies, String lightNeeded, int waterDays, String poison, Date regDate) {
         this.nickName = nickName;
         this.plantSpecies = plantSpecies;
         this.lightNeeded = lightNeeded;
@@ -43,7 +45,7 @@ public class UserPlant {
     }
 
 
-    public UserPlant(int usersPlantsID, String nickName, String plantSpecies, String lightNeeded, int waterDays, String poison, Timestamp regDate, int waterDaysLeft) {
+    public UserPlant(int usersPlantsID, String nickName, String plantSpecies, String lightNeeded, int waterDays, String poison, Date regDate, int waterDaysLeft) {
         UsersPlantsID = usersPlantsID;
         this.nickName = nickName;
         this.plantSpecies = plantSpecies;
