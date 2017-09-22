@@ -1,7 +1,5 @@
 package com.example.plantly.Domain;
 
-import java.sql.Timestamp;
-import java.time.LocalDate;
 import java.util.Date;
 
 public class UserPlant {

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
 import java.sql.*;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.sql.Connection;
@@ -209,11 +210,8 @@ public class DBRepository implements PlantyDBRepository {
 
     @Override
     public void resetWaterDate(int usersPlantsID, Date regDate, int defaultWateringDays){
-        System.out.println("Days to add: " + defaultWateringDays);
-        System.out.println("Todays date: " + regDate);
         long timeadj = defaultWateringDays*24*60*60*1000;
         Date waterDate = new Date(regDate.getTime() + timeadj);
-        System.out.println("New Wateringdate: " + waterDate);
         try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement("UPDATE UsersPlants " +
                      "SET RegistrationDate = ?, WateringDate = ? " +
@@ -302,6 +300,10 @@ public class DBRepository implements PlantyDBRepository {
     }
 
     public UserPlant rsUserPlant(ResultSet rs) throws SQLException{
+        Date regDate = rs.getDate("RegistrationDate");
+        Date wateringDate = rs.getDate("WateringDate");
+        long diff = (wateringDate.getTime() - regDate.getTime())/86400000;
+        int waterDaysLeft = (int)diff;
        return new UserPlant(rs.getInt("UsersPlantsID"),
                rs.getString("NickName"),
                rs.getString("PlantSpecies"),
@@ -310,6 +312,6 @@ public class DBRepository implements PlantyDBRepository {
                rs.getString("Poisonous"),
                (rs.getDate("RegistrationDate")),
                (rs.getDate("WateringDate")),
-               rs.getInt("WaterDaysLeft"));
+               waterDaysLeft);
     }
 }
