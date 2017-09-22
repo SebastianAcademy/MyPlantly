@@ -19,5 +19,5 @@ public interface PlantyDBRepository {
     void changePassword(int userId, String newPassword);
     List<String> getPlantName();
     void deletePlantFromUserPlants(int usersPlantsID);
-    void resetWaterDaysLeft(int usersPlantsID, Date regDate, int defaultWateringDays);
+    void resetWaterDate(int usersPlantsID, Date regDate, int defaultWateringDays);
 }

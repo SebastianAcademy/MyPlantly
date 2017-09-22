@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
 import java.sql.*;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.sql.Connection;
@@ -31,6 +32,30 @@ public class DBRepository implements PlantyDBRepository {
                 return true;
         }
         return false;
+    }
+
+    public User checkUser(String email, String password){
+        try (Connection conn = dataSource.getConnection();
+             Statement stmt = conn.createStatement();
+             PreparedStatement ps = conn.prepareStatement("Select * From Users WHERE Email = ? AND Password = ?")) {
+            ps.setString(1, email);
+            ps.setString(2, password);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    User user = new User(rs.getInt("UserId"),
+                            rs.getString("FirstName"),
+                            rs.getString("LastName"),
+                            rs.getString("Email"),
+                            rs.getString("Password"));
+                    return user;
+                }
+            }catch(SQLException e){
+                return null;
+            }
+        }catch(SQLException e){
+            throw new PlantyRepositoryException("Connection in getPlantByPlantSpecies failed!");
+        }
+        return null;
     }
 
     @Override
@@ -61,7 +86,11 @@ public class DBRepository implements PlantyDBRepository {
     }
 
     private User rsUser(ResultSet rs) throws SQLException {
-        return new User(rs.getInt("UserId"), rs.getString("FirstName"), rs.getString("LastName"), rs.getString("Email"), rs.getString("Password"));
+        return new User(rs.getInt("UserId"),
+                rs.getString("FirstName"),
+                rs.getString("LastName"),
+                rs.getString("Email"),
+                rs.getString("Password"));
     }
 
     public User getCurrentUser(String email, String password) {
@@ -161,14 +190,17 @@ public class DBRepository implements PlantyDBRepository {
         int plantId = getPlantIdFromPlants(plantSpecies);
         int defaultWateringDays = getDaysUntilWateringFromPlants(plantSpecies);
         if(plantId != 0){
+            long timeadj = defaultWateringDays*24*60*60*1000;
+            Date waterDate = new Date(regDate.getTime() + timeadj);
             try (Connection conn = dataSource.getConnection();
-                 PreparedStatement ps = conn.prepareStatement("INSERT INTO UsersPlants(UserID, NickName, Photo, PlantID, RegistrationDate, WaterDaysLeft) VALUES(?,?,?,?,?,?)")) {
+                 PreparedStatement ps = conn.prepareStatement("INSERT INTO UsersPlants(UserID, NickName, Photo, PlantID, RegistrationDate, WateringDate, WaterDaysLeft) VALUES(?,?,?,?,?,?,?)")) {
                 ps.setInt(1, userId);
                 ps.setString(2, nickName);
                 ps.setString(3, photo);
                 ps.setInt(4, plantId);
                 ps.setDate(5, regDate);
-                ps.setInt(6, defaultWateringDays);
+                ps.setDate(6,waterDate);
+                ps.setInt(7, defaultWateringDays);
                 ps.executeUpdate();
             } catch (SQLException e) {
                 System.out.println("Add plant to User exception: " + e.getMessage());
@@ -177,20 +209,22 @@ public class DBRepository implements PlantyDBRepository {
     }
 
     @Override
-    public void resetWaterDaysLeft(int usersPlantsID, Date regDate, int defaultWateringDays){
+    public void resetWaterDate(int usersPlantsID, Date regDate, int defaultWateringDays){
+        long timeadj = defaultWateringDays*24*60*60*1000;
+        Date waterDate = new Date(regDate.getTime() + timeadj);
         try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement("UPDATE UsersPlants " +
-                     "SET WaterDaysLeft = ?, RegistrationDate = ? " +
+                     "SET RegistrationDate = ?, WateringDate = ? " +
                      "WHERE UsersPlantsID = ?")){
-            ps.setInt(1, defaultWateringDays);
-            ps.setDate(2, regDate);
-            ps.setInt(3,usersPlantsID);
+            ps.setDate(1, regDate);
+            ps.setDate(2, waterDate);
+            ps.setInt(3, usersPlantsID);
             ps.executeUpdate();
         } catch (SQLException e) {
             System.out.println("Reset Water Days Left exception: " + e.getMessage());
         }
     }
-
+    //Not used for now, will probably use dates instead
     private int getDaysUntilWateringFromPlants(String plantSpecies) {
         try(Connection conn = dataSource.getConnection();
             PreparedStatement ps = conn.prepareStatement("SELECT DaysUntilWatering FROM Plants WHERE PlantSpecies = ?")) {
@@ -245,12 +279,12 @@ public class DBRepository implements PlantyDBRepository {
     public List<UserPlant> getUserPlantsInfo(int userId) {
         List<UserPlant> userPlantList = new ArrayList<>();
         try (Connection conn = dataSource.getConnection();
-             PreparedStatement ps = conn.prepareStatement("SELECT UsersPlantsID, NickName, PlantSpecies, Poisonous, DaysUntilWatering, LightNeeded, RegistrationDate, WaterDaysLeft " +
+             PreparedStatement ps = conn.prepareStatement("SELECT UsersPlantsID, NickName, PlantSpecies, Poisonous, DaysUntilWatering, LightNeeded, RegistrationDate, WaterDaysLeft, WateringDate  " +
                      "FROM UsersPlants " +
                      "JOIN Plants " +
                      "ON UsersPlants.PlantID = Plants.PlantID " +
                      "WHERE UserID = ? " +
-                     "ORDER BY WaterDaysLeft")) {
+                     "ORDER BY WateringDate")) {
             ps.setInt(1, userId);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
@@ -266,6 +300,10 @@ public class DBRepository implements PlantyDBRepository {
     }
 
     public UserPlant rsUserPlant(ResultSet rs) throws SQLException{
+        Date regDate = rs.getDate("RegistrationDate");
+        Date wateringDate = rs.getDate("WateringDate");
+        long diff = (wateringDate.getTime() - regDate.getTime())/86400000;
+        int waterDaysLeft = (int)diff;
        return new UserPlant(rs.getInt("UsersPlantsID"),
                rs.getString("NickName"),
                rs.getString("PlantSpecies"),
@@ -273,6 +311,7 @@ public class DBRepository implements PlantyDBRepository {
                rs.getInt("DaysUntilWatering"),
                rs.getString("Poisonous"),
                (rs.getDate("RegistrationDate")),
-               rs.getInt("WaterDaysLeft"));
+               (rs.getDate("WateringDate")),
+               waterDaysLeft);
     }
 }

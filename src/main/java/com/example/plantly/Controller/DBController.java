@@ -13,13 +13,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.nio.file.Path;
-import java.time.DateTimeException;
 import java.time.LocalDate;
-
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.util.Date;
 import java.util.List;
 
 @Controller
@@ -63,21 +57,9 @@ public class DBController {
         return new ModelAndView("index").addObject("infoLogin", "Invalid email or password!");
     }
 
-    private void countdownWateringDays (List<UserPlant> userPlantList){
-        ZonedDateTime startOfToday = LocalDate.now().atStartOfDay(ZoneId.systemDefault());
-        long todayMs = startOfToday.toEpochSecond() * 1000;
-        for(int i=0;i<userPlantList.size();i++){
-            if(userPlantList.get(i).regDate.getTime() > todayMs){
-
-            }
-        }
-    }
-
     @GetMapping("/user")
     public ModelAndView userpage(HttpSession session) {
         if (session.getAttribute("user") != null) {
-            LocalDate from = LocalDate.now();
-            long diff = 0;
             setSessionUserPlantsList(session);
             return new ModelAndView("userpage");
         }
@@ -147,14 +129,16 @@ public class DBController {
     @GetMapping("/watering/{usersPlantsID}/{waterDays}")
     public String resetWaterDaysLeft(@PathVariable int usersPlantsID, @PathVariable int waterDays){
         LocalDate regdate = LocalDate.now();
-        DBConnection.resetWaterDaysLeft(usersPlantsID, java.sql.Date.valueOf(regdate), waterDays);
+        DBConnection.resetWaterDate(usersPlantsID, java.sql.Date.valueOf(regdate), waterDays);
         return "redirect:/user";
     }
 
     private void setSessionUserPlantsList(HttpSession session){
         User user = (User)session.getAttribute("user");
         List<UserPlant> userPlantList = DBConnection.getUserPlantsInfo(user.getUserId());
-        session.setAttribute("userPlantsList", userPlantList);
+        if (userPlantList.size() > 0) {
+            session.setAttribute("userPlantsList", userPlantList);
+        }
     }
 
     @RequestMapping(path = "/GET", method = RequestMethod.GET)
