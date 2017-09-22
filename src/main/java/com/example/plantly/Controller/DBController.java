@@ -13,13 +13,10 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.nio.file.Path;
-import java.time.DateTimeException;
 import java.time.LocalDate;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.Date;
 import java.util.List;
 
 @Controller
@@ -147,7 +144,7 @@ public class DBController {
     @GetMapping("/watering/{usersPlantsID}/{waterDays}")
     public String resetWaterDaysLeft(@PathVariable int usersPlantsID, @PathVariable int waterDays){
         LocalDate regdate = LocalDate.now();
-        DBConnection.resetWaterDaysLeft(usersPlantsID, java.sql.Date.valueOf(regdate), waterDays);
+        DBConnection.resetWaterDate(usersPlantsID, java.sql.Date.valueOf(regdate), waterDays);
         return "redirect:/user";
     }
 
