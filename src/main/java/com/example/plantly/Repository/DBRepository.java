@@ -3,11 +3,13 @@ package com.example.plantly.Repository;
 import com.example.plantly.Domain.Plant;
 import com.example.plantly.Domain.User;
 import com.example.plantly.Domain.UserPlant;
+import org.apache.tomcat.jni.Local;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
 import java.sql.*;
+import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
@@ -300,9 +302,9 @@ public class DBRepository implements PlantyDBRepository {
     }
 
     public UserPlant rsUserPlant(ResultSet rs) throws SQLException{
-        Date regDate = rs.getDate("RegistrationDate");
+        Date today = Date.valueOf(LocalDate.now());
         Date wateringDate = rs.getDate("WateringDate");
-        long diff = (wateringDate.getTime() - regDate.getTime())/86400000;
+        long diff = (wateringDate.getTime() - today.getTime())/86400000;
         int waterDaysLeft = (int)diff;
        return new UserPlant(rs.getInt("UsersPlantsID"),
                rs.getString("NickName"),

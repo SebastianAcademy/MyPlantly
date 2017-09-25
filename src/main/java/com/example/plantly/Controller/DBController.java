@@ -116,7 +116,6 @@ public class DBController {
     public ModelAndView addUserPlant(@RequestParam String nickName, @RequestParam String plantSpecies, @RequestParam int userId, HttpSession session){
         boolean nickNameExists = DBConnection.nickNameAlreadyExists(nickName, userId);
         LocalDate regdate = LocalDate.now();
-
         if(!nickNameExists){
             DBConnection.addPlantToUserPlants(nickName, "needs a image URL", userId, plantSpecies, java.sql.Date.valueOf(regdate));
             setSessionUserPlantsList(session);
