@@ -11,7 +11,7 @@ public class UserPlant {
     public String poison;
     public Date wateringDate;
     public Date regDate;
-    public int waterDaysLeft;
+public int waterDaysLeft;
 
 
 

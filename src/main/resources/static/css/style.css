@@ -614,3 +614,6 @@ color: white;
   text-align: center;
   font-size: 18px;
 }
+.watering-date-today{
+  color: red;
+}
