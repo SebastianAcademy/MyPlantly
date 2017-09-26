@@ -13,6 +13,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.validation.constraints.Null;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -33,6 +34,7 @@ public class DBController {
 
     @PostMapping("/signup")
     public ModelAndView signup(Model model, @RequestParam String email, @RequestParam String firstname, @RequestParam String lastname, @RequestParam String password, HttpSession session) {
+        email = email.toLowerCase();
         List<User> allUsers = DBConnection.getAllUsers();
         for (int i = 0; i < allUsers.size(); i++) {
             if (allUsers.get(i).getEmail().equals(email)) {
@@ -47,9 +49,9 @@ public class DBController {
 
     @PostMapping("/user")
     public ModelAndView loggedin(@RequestParam String email, @RequestParam String password, HttpSession session, Model model) {
+        email = email.toLowerCase();
         boolean userExists = DBConnection.userExists(email, password);
         User user = DBConnection.getCurrentUser(email, password);
-        System.out.println(user.getUserType());
         if(userExists) {
             session.setAttribute("user", user);
             setSessionUserPlantsList(session);
@@ -73,8 +75,16 @@ public class DBController {
     }
 
     @GetMapping("/admin")
-    public String adminHTML(){
-        return "admin";
+    public String adminHTML(HttpSession session){
+        try {
+            User user = (User) session.getAttribute("user");
+            if (user.getUserType().equals("admin")) {
+                return "admin";
+            }
+            return "index";
+        }catch(NullPointerException e){
+            return "index";
+        }
     }
 
 
