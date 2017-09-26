@@ -49,6 +49,7 @@ public class DBController {
     public ModelAndView loggedin(@RequestParam String email, @RequestParam String password, HttpSession session, Model model) {
         boolean userExists = DBConnection.userExists(email, password);
         User user = DBConnection.getCurrentUser(email, password);
+        System.out.println(user.getUserType());
         if(userExists) {
             session.setAttribute("user", user);
             setSessionUserPlantsList(session);
@@ -69,6 +70,11 @@ public class DBController {
     @GetMapping("/changePassword")
     public String passwordChangeHTML(){
         return "changePassword";
+    }
+
+    @GetMapping("/admin")
+    public String adminHTML(){
+        return "admin";
     }
 
 
