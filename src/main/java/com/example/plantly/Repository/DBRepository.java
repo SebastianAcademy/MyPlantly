@@ -3,14 +3,12 @@ package com.example.plantly.Repository;
 import com.example.plantly.Domain.Plant;
 import com.example.plantly.Domain.User;
 import com.example.plantly.Domain.UserPlant;
-import org.apache.tomcat.jni.Local;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
 import java.sql.*;
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.sql.Connection;
@@ -48,7 +46,8 @@ public class DBRepository implements PlantyDBRepository {
                             rs.getString("FirstName"),
                             rs.getString("LastName"),
                             rs.getString("Email"),
-                            rs.getString("Password"));
+                            rs.getString("Password"),
+                            rs.getString("UserType"));
                     return user;
                 }
             }catch(SQLException e){
@@ -63,16 +62,30 @@ public class DBRepository implements PlantyDBRepository {
     @Override
     public boolean addUser(String email, String firstname, String lastname, String password) {
         try (Connection conn = dataSource.getConnection();
-             PreparedStatement ps = conn.prepareStatement("INSERT INTO users (email, firstname, lastname, password) values (?,?,?,?) ", new String[]{"UserID"}) ) {
+             PreparedStatement ps = conn.prepareStatement("INSERT INTO users (email, firstname, lastname, password, usertype) values (?,?,?,?,?) ", new String[]{"UserID"}) ) {
             ps.setString(1, email);
             ps.setString(2, firstname);
             ps.setString(3, lastname);
             ps.setString(4, password);
+            ps.setString(5, "user");
             ps.executeUpdate();
             return true;
         } catch (SQLException e) {
         }
         return false;
+    }
+
+    public boolean setAdminToUser(int userId){
+        try(Connection conn = dataSource.getConnection();
+            PreparedStatement ps = conn.prepareStatement("Update Users SET UserType = ? WHERE UserID = ?")) {
+            ps.setString(1, "admin");
+            ps.setInt(2, userId);
+            ps.executeUpdate();
+        }catch(SQLException e){
+            System.out.println("Change password:" + e.getMessage());
+            return false;
+        }
+        return true;
     }
 
     public List<User> getAllUsers() {
@@ -92,7 +105,8 @@ public class DBRepository implements PlantyDBRepository {
                 rs.getString("FirstName"),
                 rs.getString("LastName"),
                 rs.getString("Email"),
-                rs.getString("Password"));
+                rs.getString("Password"),
+                rs.getString("UserType"));
     }
 
     public User getCurrentUser(String email, String password) {
@@ -104,6 +118,7 @@ public class DBRepository implements PlantyDBRepository {
         }
         return null;
     }
+
     @Override
     public void changePassword(int userId, String newPassword){
         try(Connection conn = dataSource.getConnection();
