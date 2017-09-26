@@ -1,5 +1,4 @@
 package com.example.plantly.Controller;
-
 import com.example.plantly.Domain.Plant;
 import com.example.plantly.Domain.User;
 import com.example.plantly.Domain.UserPlant;
@@ -9,11 +8,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
-
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.validation.constraints.Null;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -156,6 +153,22 @@ public class DBController {
         List<UserPlant> userPlantList = DBConnection.getUserPlantsInfo(user.getUserId());
         if (userPlantList.size() > 0) {
             session.setAttribute("userPlantsList", userPlantList);
+        }
+    }
+
+    @PostMapping("/addPlantToPlants")
+    public ModelAndView addPlantToPlantsTable(String plantSpecies, String plantGenus, String plantInfo, String wateringInfo, String tempature,
+                                              String humidity, String flowering, String pests, String diseases, String soil, String potSize,
+                                              String poisonous, int wateringDays, String fertilizing, String lightinfo, String lightNeeded){
+
+        Plant plant = new Plant(plantSpecies, plantGenus, plantInfo, wateringInfo, tempature,
+                                humidity, flowering, pests, diseases, soil, potSize,
+                                poisonous, wateringDays, fertilizing, lightinfo, lightNeeded);
+        boolean insert = DBConnection.addPlantToPlants(plant);
+        if(insert){
+            return new ModelAndView("admin").addObject("info", "Plant added!");
+        }else {
+            return new ModelAndView("admin").addObject("info", "Couldn´t add plant!");
         }
     }
 

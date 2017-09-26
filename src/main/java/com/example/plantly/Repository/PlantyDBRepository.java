@@ -20,4 +20,5 @@ public interface PlantyDBRepository {
     List<String> getPlantName();
     void deletePlantFromUserPlants(int usersPlantsID);
     void resetWaterDate(int usersPlantsID, Date regDate, int defaultWateringDays);
+    boolean addPlantToPlants(Plant plant);
 }

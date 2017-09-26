@@ -225,6 +225,34 @@ public class DBRepository implements PlantyDBRepository {
     }
 
     @Override
+    public boolean addPlantToPlants(Plant plant) {
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement ps = conn.prepareStatement("INSERT INTO Plants (PlantSpecies, PlantGenus, PlantInfo, Water, Tempature, Humidity, Flowering" +
+                     ", Pests, Diseases, Soil, PotSize, Poisonous, DaysUntilWatering, Fertilizer, Light, LightNeeded) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) ", new String[]{"PlantID"}) ) {
+                ps.setString(1, plant.plantSpecies);
+                ps.setString(2, plant.plantGenus);
+                ps.setString(3, plant.plantInfo);
+                ps.setString(4, plant.water);
+                ps.setString(5, plant.temperature);
+                ps.setString(6, plant.humidity);
+                ps.setString(7, plant.flowering);
+                ps.setString(8, plant.pests);
+                ps.setString(9, plant.diseases);
+                ps.setString(10, plant.soil);
+                ps.setString(11, plant.potSize);
+                ps.setString(12, plant.poisonous);
+                ps.setInt(13, plant.daysUntilWatering);
+                ps.setString(14, plant.fertilizer);
+                ps.setString(15, plant.light);
+                ps.setString(16, plant.lightNeeded);
+            ps.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            return false;
+        }
+    }
+
+    @Override
     public void resetWaterDate(int usersPlantsID, Date regDate, int defaultWateringDays){
         long timeadj = defaultWateringDays*24*60*60*1000;
         Date waterDate = new Date(regDate.getTime() + timeadj);

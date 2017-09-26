@@ -39,6 +39,25 @@ public class Plant {
         this.plantId = plantId;
     }
 
+    public Plant(String plantSpecies, String plantGenus, String plantInfo, String water, String temperature, String humidity, String flowering, String pests, String diseases, String soil, String potSize, String poisonous, int daysUntilWatering, String fertilizer, String light, String lightNeeded) {
+        this.plantSpecies = plantSpecies;
+        this.plantGenus = plantGenus;
+        this.plantInfo = plantInfo;
+        this.water = water;
+        this.temperature = temperature;
+        this.humidity = humidity;
+        this.flowering = flowering;
+        this.pests = pests;
+        this.diseases = diseases;
+        this.soil = soil;
+        this.potSize = potSize;
+        this.poisonous = poisonous;
+        this.daysUntilWatering = daysUntilWatering;
+        this.fertilizer = fertilizer;
+        this.light = light;
+        this.lightNeeded = lightNeeded;
+    }
+
     public Plant(String plantSpecies, int plantId) {
         this.plantSpecies = plantSpecies;
         this.plantId = plantId;
