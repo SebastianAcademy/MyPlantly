@@ -151,9 +151,7 @@ public class DBController {
     private void setSessionUserPlantsList(HttpSession session){
         User user = (User)session.getAttribute("user");
         List<UserPlant> userPlantList = DBConnection.getUserPlantsInfo(user.getUserId());
-        if (userPlantList.size() > 0) {
-            session.setAttribute("userPlantsList", userPlantList);
-        }
+        session.setAttribute("userPlantsList", userPlantList);
     }
 
     @PostMapping("/addPlantToPlants")
@@ -180,8 +178,9 @@ public class DBController {
 
 
     @GetMapping("/deletePlant/{usersPlantsID}")
-    public String deletePlant(@PathVariable int usersPlantsID){
+    public String deletePlant(@PathVariable int usersPlantsID, HttpSession session){
         DBConnection.deletePlantFromUserPlants(usersPlantsID);
+        setSessionUserPlantsList(session);
         return "redirect:/user";
     }
 
