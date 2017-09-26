@@ -36,7 +36,6 @@ public class DBRepository implements PlantyDBRepository {
 
     public User checkUser(String email, String password){
         try (Connection conn = dataSource.getConnection();
-             Statement stmt = conn.createStatement();
              PreparedStatement ps = conn.prepareStatement("Select * From Users WHERE Email = ? AND Password = ?")) {
             ps.setString(1, email);
             ps.setString(2, password);
@@ -104,7 +103,7 @@ public class DBRepository implements PlantyDBRepository {
         return new User(rs.getInt("UserId"),
                 rs.getString("FirstName"),
                 rs.getString("LastName"),
-                rs.getString("Email"),
+                rs.getString("Email").toLowerCase(),
                 rs.getString("Password"),
                 rs.getString("UserType"));
     }
