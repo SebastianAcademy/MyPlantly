@@ -61,7 +61,7 @@ public class DBRepository implements PlantyDBRepository {
     @Override
     public boolean addUser(String email, String firstname, String lastname, String password) {
         try (Connection conn = dataSource.getConnection();
-             PreparedStatement ps = conn.prepareStatement("INSERT INTO users (email, firstname, lastname, password, usertype) values (?,?,?,?,?) ", new String[]{"UserID"}) ) {
+             PreparedStatement ps = conn.prepareStatement("INSERT INTO users (email, firstname, lastname, password, usertype) values (?,?,?,?,?) ") ) {
             ps.setString(1, email);
             ps.setString(2, firstname);
             ps.setString(3, lastname);
