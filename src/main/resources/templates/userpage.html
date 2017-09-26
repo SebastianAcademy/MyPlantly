@@ -50,6 +50,9 @@
                         <li><a href="changePassword">
                             <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span> | change password</a>
                         </li>
+                        <li th:if="${session.user.userType} == 'admin'"><a href="admin">
+                            <span class="glyphicon glyphicon-globe" aria-hidden="true"></span> | admin</a>
+                        </li>
                         <li><a href="logout">
                             <span class="glyphicon glyphicon-off" aria-hidden="true"></span> | log out</a>
                         </li>
@@ -68,7 +71,7 @@
 
                 <div class="col-md-3">
 
-                        <div class="my-plantly-form" id="my-plantly-add-div" th:if="${!session.userPlantsList.empty}">
+                        <div class="my-plantly-form" id="my-plantly-add-div" th:if="${session.userPlantsList} != null">
                             <h2 th:text="${session.userPlantsList[0].nickName}"></h2>
                             <div class="needs-water">
                                 <h4 th:if="${session.userPlantsList[0].waterDaysLeft} gt 0" th:text="'Needs water in'" />
@@ -155,7 +158,7 @@
 <script src='https://cdnjs.cloudflare.com/ajax/libs/gsap/1.18.0/TweenMax.min.js'></script>
 <script src='https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.9.3/lodash.min.js'></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-<!--<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>-->
+<!--<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>-->
 <script type="text/javascript" src="/js/TimeCircles.js"></script>
 
 <script src="/js/index.js"></script>

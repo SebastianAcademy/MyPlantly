@@ -7,23 +7,16 @@ public class User {
     private String lastname;
     private String email;
     private String password;
-
-   /* public User(String firstname, String lastname, String email, String password) {
-        this.firstname = firstname;
-        this.lastname = lastname;
-        this.email = email;
-        this.password = password;
-
-    }*/
+    private String userType;
 
 
-
-    public User(int userId, String firstname, String lastname, String email, String password) {
+    public User(int userId, String firstname, String lastname, String email, String password, String userType) {
         this.userId = userId;
         this.firstname = firstname;
         this.lastname = lastname;
         this.email = email;
         this.password = password;
+        this.userType = userType;
 
     }
 
@@ -64,5 +57,11 @@ public class User {
         return userId;
     }
 
+    public String getUserType() {
+        return userType;
+    }
 
+    public void setUserType(String userType) {
+        this.userType = userType;
+    }
 }
