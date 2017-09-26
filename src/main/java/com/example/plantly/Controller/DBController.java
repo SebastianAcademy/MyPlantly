@@ -70,8 +70,11 @@ public class DBController {
     }
 
     @GetMapping("/changePassword")
-    public String passwordChangeHTML(){
-        return "changePassword";
+    public String passwordChangeHTML(HttpSession session){
+        if (session.getAttribute("user") != null) {
+            return "changePassword";
+        }
+        return "index";
     }
 
     @GetMapping("/admin")
@@ -89,7 +92,7 @@ public class DBController {
 
 
     @PostMapping("/passwordVerification")
-    public /*String*/ ModelAndView passwordVerification(@RequestParam String newPassword, @RequestParam String oldPassword, HttpSession session, Model model) {
+    public  ModelAndView passwordVerification(@RequestParam String newPassword, @RequestParam String oldPassword, HttpSession session) {
         if(session.getAttribute("user") != null) {
             User user = (User) session.getAttribute("user");
             if (user.getPassword().equals(oldPassword)) {
