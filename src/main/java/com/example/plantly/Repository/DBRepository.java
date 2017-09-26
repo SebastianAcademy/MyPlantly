@@ -228,7 +228,7 @@ public class DBRepository implements PlantyDBRepository {
     public boolean addPlantToPlants(Plant plant) {
         try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement("INSERT INTO Plants (PlantSpecies, PlantGenus, PlantInfo, Water, Tempature, Humidity, Flowering" +
-                     ", Pests, Diseases, Soil, PotSize, Poisonous, DaysUntilWatering, Fertilizer, Light, LightNeeded) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) ", new String[]{"PlantID"}) ) {
+                     ", Pests, Diseases, Soil, PotSize, Poisonous, DaysUntilWatering, Fertilizer, Light, LightNeeded) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) ") ) {
                 ps.setString(1, plant.plantSpecies);
                 ps.setString(2, plant.plantGenus);
                 ps.setString(3, plant.plantInfo);
