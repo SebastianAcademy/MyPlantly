@@ -61,7 +61,7 @@ public class DBRepository implements PlantyDBRepository {
     @Override
     public boolean addUser(String email, String firstname, String lastname, String password) {
         try (Connection conn = dataSource.getConnection();
-             PreparedStatement ps = conn.prepareStatement("INSERT INTO users (email, firstname, lastname, password, usertype) values (?,?,?,?,?) ", new String[]{"UserID"}) ) {
+             PreparedStatement ps = conn.prepareStatement("INSERT INTO users (email, firstname, lastname, password, usertype) values (?,?,?,?,?) ") ) {
             ps.setString(1, email);
             ps.setString(2, firstname);
             ps.setString(3, lastname);
@@ -221,6 +221,34 @@ public class DBRepository implements PlantyDBRepository {
             } catch (SQLException e) {
                 System.out.println("Add plant to User exception: " + e.getMessage());
             }
+        }
+    }
+
+    @Override
+    public boolean addPlantToPlants(Plant plant) {
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement ps = conn.prepareStatement("INSERT INTO Plants (PlantSpecies, PlantGenus, PlantInfo, Water, Tempature, Humidity, Flowering" +
+                     ", Pests, Diseases, Soil, PotSize, Poisonous, DaysUntilWatering, Fertilizer, Light, LightNeeded) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) ") ) {
+                ps.setString(1, plant.plantSpecies);
+                ps.setString(2, plant.plantGenus);
+                ps.setString(3, plant.plantInfo);
+                ps.setString(4, plant.water);
+                ps.setString(5, plant.temperature);
+                ps.setString(6, plant.humidity);
+                ps.setString(7, plant.flowering);
+                ps.setString(8, plant.pests);
+                ps.setString(9, plant.diseases);
+                ps.setString(10, plant.soil);
+                ps.setString(11, plant.potSize);
+                ps.setString(12, plant.poisonous);
+                ps.setInt(13, plant.daysUntilWatering);
+                ps.setString(14, plant.fertilizer);
+                ps.setString(15, plant.light);
+                ps.setString(16, plant.lightNeeded);
+            ps.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            return false;
         }
     }
 
