@@ -209,14 +209,14 @@ public class DBRepository implements PlantyDBRepository {
             long timeadj = defaultWateringDays*24*3600;
             Date waterDate = new Date(regDate.getTime() + timeadj*1000);
             try (Connection conn = dataSource.getConnection();
-                 PreparedStatement ps = conn.prepareStatement("INSERT INTO UsersPlants(UserID, NickName, Photo, PlantID, RegistrationDate, WateringDate, WaterDaysLeft) VALUES(?,?,?,?,?,?,?)")) {
+                 PreparedStatement ps = conn.prepareStatement("INSERT INTO UsersPlants(UserID, NickName, Photo, PlantID, RegistrationDate, WateringDate, WateredDate) VALUES(?,?,?,?,?,?,?)")) {
                 ps.setInt(1, userId);
                 ps.setString(2, nickName);
                 ps.setString(3, photo);
                 ps.setInt(4, plantId);
                 ps.setDate(5, regDate);
                 ps.setDate(6,waterDate);
-                ps.setInt(7, defaultWateringDays);
+                ps.setDate(7, regDate);
                 ps.executeUpdate();
             } catch (SQLException e) {
                 System.out.println("Add plant to User exception: " + e.getMessage());
@@ -258,7 +258,7 @@ public class DBRepository implements PlantyDBRepository {
         Date waterDate = new Date(regDate.getTime() + timeadj*1000);
         try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement("UPDATE UsersPlants " +
-                     "SET RegistrationDate = ?, WateringDate = ? " +
+                     "SET WateredDate = ?, WateringDate = ? " +
                      "WHERE UsersPlantsID = ?")){
             ps.setDate(1, regDate);
             ps.setDate(2, waterDate);
@@ -323,7 +323,7 @@ public class DBRepository implements PlantyDBRepository {
     public List<UserPlant> getUserPlantsInfo(int userId) {
         List<UserPlant> userPlantList = new ArrayList<>();
         try (Connection conn = dataSource.getConnection();
-             PreparedStatement ps = conn.prepareStatement("SELECT UsersPlantsID, NickName, PlantSpecies, Poisonous, DaysUntilWatering, LightNeeded, RegistrationDate, WaterDaysLeft, WateringDate  " +
+             PreparedStatement ps = conn.prepareStatement("SELECT UsersPlantsID, NickName, PlantSpecies, Poisonous, DaysUntilWatering, LightNeeded, RegistrationDate, WateredDate, WateringDate  " +
                      "FROM UsersPlants " +
                      "JOIN Plants " +
                      "ON UsersPlants.PlantID = Plants.PlantID " +
@@ -354,7 +354,7 @@ public class DBRepository implements PlantyDBRepository {
                rs.getString("LightNeeded"),
                rs.getInt("DaysUntilWatering"),
                rs.getString("Poisonous"),
-               (rs.getDate("RegistrationDate")),
+               (rs.getDate("WateredDate")),
                (rs.getDate("WateringDate")),
                waterDaysLeft);
     }

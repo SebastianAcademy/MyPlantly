@@ -10,8 +10,8 @@ public class UserPlant {
     public int waterDays;
     public String poison;
     public Date wateringDate;
-    public Date regDate;
-public int waterDaysLeft;
+    public Date wateredDate;
+    public int waterDaysLeft;
 
 
 
@@ -29,7 +29,7 @@ public int waterDaysLeft;
         this.lightNeeded = lightNeeded;
         this.waterDays = waterDays;
         this.poison = poison;
-        this.regDate = regDate;
+        this.wateredDate = regDate;
 
     }
 
@@ -51,7 +51,7 @@ public int waterDaysLeft;
         this.lightNeeded = lightNeeded;
         this.waterDays = waterDays;
         this.poison = poison;
-        this.regDate = regDate;
+        this.wateredDate = regDate;
         this.wateringDate = wateringDate;
         this.waterDaysLeft = waterDaysLeft;
     }
