@@ -206,7 +206,7 @@ public class DBRepository implements PlantyDBRepository {
         int plantId = getPlantIdFromPlants(plantSpecies);
         int defaultWateringDays = getDaysUntilWateringFromPlants(plantSpecies);
         if(plantId != 0){
-            long timeadj = defaultWateringDays*24*60*60;
+            long timeadj = defaultWateringDays*24*3600;
             Date waterDate = new Date(regDate.getTime() + timeadj*1000);
             try (Connection conn = dataSource.getConnection();
                  PreparedStatement ps = conn.prepareStatement("INSERT INTO UsersPlants(UserID, NickName, Photo, PlantID, RegistrationDate, WateringDate, WaterDaysLeft) VALUES(?,?,?,?,?,?,?)")) {
@@ -254,7 +254,7 @@ public class DBRepository implements PlantyDBRepository {
 
     @Override
     public void resetWaterDate(int usersPlantsID, Date regDate, int defaultWateringDays){
-        long timeadj = defaultWateringDays*24*60*60;
+        long timeadj = defaultWateringDays*24*3600;
         Date waterDate = new Date(regDate.getTime() + timeadj*1000);
         try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement("UPDATE UsersPlants " +
