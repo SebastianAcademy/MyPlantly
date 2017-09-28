@@ -63,6 +63,7 @@
             <div class="col-md-4"></div>
             <div class="col-md-4 my-plantly-form change-pass-div" id="my-plantly-add-div">
                 <h2>Add plant to plants table</h2>
+                <div th:if="${info}" th:text="${info}"></div>
                 <form action="/addPlantToPlants" method="post">
                     <div class="field-wrap">
                         <label>

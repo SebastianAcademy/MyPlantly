@@ -47,7 +47,7 @@
                         <li><a href="changePassword">
                             <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span> | change password</a>
                         </li>
-                        <li th:if="${session.user.userType} == 'admin'"><a href="admin">
+                        <li th:if="${session.user}"><a th:if="${session.user.userType} == 'admin'" href="admin">
                             <span class="glyphicon glyphicon-globe" aria-hidden="true"></span> | admin</a>
                         </li>
                         <li><a href="logout">
