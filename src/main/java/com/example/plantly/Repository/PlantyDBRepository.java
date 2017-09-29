@@ -9,11 +9,10 @@ import java.util.List;
 
 public interface PlantyDBRepository {
 
-    boolean addUser(String firstname, String lastname, String email, String password);
+    void addUser(User user);
+    boolean userExists(String email);
     Plant getPlantByPlantSpecies (String plantSpecies);
     void addPlantToUserPlants(String nickName, String photo, int userId, String plantSpecies, Date regDate);
-    User getCurrentUser(String email, String password);
-    boolean userExists(String email, String password);
     List<UserPlant> getUserPlantsInfo(int userId);
     boolean nickNameAlreadyExists(String nickName, int userId);
     void changePassword(int userId, String newPassword);
@@ -21,4 +20,5 @@ public interface PlantyDBRepository {
     void deletePlantFromUserPlants(int usersPlantsID);
     void resetWaterDate(int usersPlantsID, Date regDate, int defaultWateringDays);
     boolean addPlantToPlants(Plant plant);
+    User checkUser(String email, String password);
 }
