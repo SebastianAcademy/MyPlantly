@@ -71,18 +71,19 @@
 
                 <div class="col-md-3">
 
-                    <div class="my-plantly-form" id="my-plantly-add-div" th:if="${session.userPlantsList[0].usersPlantsID != 0}">
-                        <h2 th:text="${session.userPlantsList[0].nickName}"></h2>
-                        <div class="needs-water">
-                            <h4 th:if="${session.userPlantsList[0].waterDaysLeft} gt 0" th:text="'Needs water in'" />
-                            <h4 th:if="${session.userPlantsList[0].waterDaysLeft} == 0" th:text="'Needs water'" />
-                            <h4 th:if="${session.userPlantsList[0].waterDaysLeft} lt -6 AND ${session.userPlantsList[0].waterDaysLeft} != 0" th:text="'Plant murderer!'" />
-                            <div th:if="${session.userPlantsList[0].waterDaysLeft} gt 0" th:text="${session.userPlantsList[0].waterDaysLeft}"></div>
-                            <div data-th="Days until watering" class="watering-date-today" th:if="${session.userPlantsList[0].waterDaysLeft} == 0" th:text="'TODAY'"></div>
-                            <div th:if="${session.userPlantsList[0].waterDaysLeft} == 1" th:text="' day'"></div>
-                            <div th:if="${session.userPlantsList[0].waterDaysLeft} gt 1 AND ${session.userPlantsList[0].waterDaysLeft} != 0" th:text=" ' days'"></div>
-                            <div th:if="${session.userPlantsList[0].waterDaysLeft} lt 0 AND ${session.userPlantsList[0].waterDaysLeft} != 0" th:text="'Your plant should have been watered ' + ${session.userPlantsList[0].wateringDate} "></div>
-                        </div>
+                        <div class="my-plantly-form" id="my-plantly-add-div" th:if="${session.userPlantsList[0].usersPlantsID != 0}">
+                            <h2 th:text="${session.userPlantsList[0].nickName}"></h2>
+                            <div class="needs-water">
+                                <h4 th:if="${session.userPlantsList[0].waterDaysLeft} gt 0" th:text="'Needs water in'" />
+                                <h4 th:if="${session.userPlantsList[0].waterDaysLeft} == 0" th:text="'Needs water'" />
+                                <h4 th:if="${session.userPlantsList[0].waterDaysLeft} lt -6 AND ${session.userPlantsList[0].waterDaysLeft} != 0" th:text="'Plant murderer!'" />
+                                <div th:if="${session.userPlantsList[0].waterDaysLeft} gt 0" th:text="${session.userPlantsList[0].waterDaysLeft}"></div>
+                                <div data-th="Days until watering" class="watering-date-today" th:if="${session.userPlantsList[0].waterDaysLeft} == 0" th:text="'TODAY'"></div>
+                                <div th:if="${session.userPlantsList[0].waterDaysLeft} == 1" th:text="' day'"></div>
+                                <div th:if="${session.userPlantsList[0].waterDaysLeft} gt 1 AND ${session.userPlantsList[0].waterDaysLeft} != 0" th:text=" ' days'"></div>
+                                <div th:if="${session.userPlantsList[0].waterDaysLeft} lt 0 AND ${session.userPlantsList[0].waterDaysLeft} != 0" th:text="'Your plant should have been watered ' + ${session.userPlantsList[0].wateringDate} "></div>
+                            </div>
+
                     </div>
 
 
@@ -123,7 +124,7 @@
                         <th>Remove</th>
                     </tr>
 
-                    <tr th:if="${!session.userPlantsList.empty}" th:each="plantInfo : ${session.userPlantsList}">
+                    <tr th:if="${session.userPlantsList[0].usersPlantsID != 0}" th:each="plantInfo : ${session.userPlantsList}">
                         <td data-th="Nickname " th:text="${plantInfo.nickName}"></td>
                         <td data-th="Plant species ">
                             <a th:href="@{'/plantinfo/'+ ${plantInfo.plantSpecies}}"
@@ -135,12 +136,12 @@
                         <td data-th="Days until watering" class="watering-date-today" th:if="${plantInfo.waterDaysLeft} == 0" th:text="'TODAY'"></td>
                         <td data-th="Days until watering" class="watering-date-today" th:if="${plantInfo.waterDaysLeft} lt 0" th:text="${plantInfo.waterDaysLeft}"></td>
                         <td data-th="Water Plant">
-                            <a th:href="'/watering/' + ${plantInfo.UsersPlantsID} + '/' + ${plantInfo.waterDays}">
+                            <a th:href="'/watering/' + ${plantInfo.usersPlantsID} + '/' + ${plantInfo.waterDays}">
                                 <button class="water-button">Water</button>
                             </a>
                         </td>
 
-                        <td data-th="Remove"><a th:href="'/deletePlant/' + ${plantInfo.UsersPlantsID}">
+                        <td data-th="Remove"><a th:href="'/deletePlant/' + ${plantInfo.usersPlantsID}">
                             <span class="glyphicon glyphicon-remove glyphicon-red" aria-hidden="true"></span>
                         </a>
 

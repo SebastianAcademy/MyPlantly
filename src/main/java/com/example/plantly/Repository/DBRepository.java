@@ -25,15 +25,20 @@ public class DBRepository implements PlantyDBRepository {
     private DataSource dataSource;
 
     @Override
-    public boolean userExists(String email, String password) {
-        List<User> getAllUsers = getAllUsers();
-        for(User u: getAllUsers) {
-            if(u.getEmail().equals(email) && u.getPassword().equals(password))
-                return true;
+    public void addUser(User user) {
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement ps = conn.prepareStatement("INSERT INTO users (email, firstname, lastname, password, usertype) values (?,?,?,?,?) ") ) {
+            ps.setString(1, user.getEmail());
+            ps.setString(2, user.getFirstname());
+            ps.setString(3, user.getLastname());
+            ps.setString(4, user.getPassword());
+            ps.setString(5, "user");
+            ps.executeUpdate();
+        } catch (SQLException e) {
         }
-        return false;
     }
 
+    @Override
     public User checkUser(String email, String password){
         try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement("Select * From Users WHERE Email = ? AND Password = ?")) {
@@ -50,6 +55,7 @@ public class DBRepository implements PlantyDBRepository {
                     return user;
                 }
             }catch(SQLException e){
+                System.out.println("");
                 return null;
             }
         }catch(SQLException e){
@@ -59,19 +65,20 @@ public class DBRepository implements PlantyDBRepository {
     }
 
     @Override
-    public boolean addUser(String email, String firstname, String lastname, String password) {
+    public boolean userExists(String email){
         try (Connection conn = dataSource.getConnection();
-             PreparedStatement ps = conn.prepareStatement("INSERT INTO users (email, firstname, lastname, password, usertype) values (?,?,?,?,?) ") ) {
+             PreparedStatement ps = conn.prepareStatement("Select Email From Users WHERE Email = ?")) {
             ps.setString(1, email);
-            ps.setString(2, firstname);
-            ps.setString(3, lastname);
-            ps.setString(4, password);
-            ps.setString(5, "user");
-            ps.executeUpdate();
-            return true;
-        } catch (SQLException e) {
+            ResultSet rs = ps.executeQuery();
+            if(rs.next()){
+                return true;
+            }else{
+                return false;
+            }
+        }catch(SQLException e){
+            System.out.println("SQLexception userExists: " + e.getMessage());
+            return false;
         }
-        return false;
     }
 
     public boolean setAdminToUser(int userId){
@@ -85,37 +92,6 @@ public class DBRepository implements PlantyDBRepository {
             return false;
         }
         return true;
-    }
-
-    public List<User> getAllUsers() {
-        try (Connection conn = dataSource.getConnection();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery("Select * From Users")) {
-            List<User> users = new ArrayList<>();
-            while (rs.next()) users.add(rsUser(rs));
-            return users;
-        } catch (SQLException e) {
-            throw new PlantyRepositoryException(e);
-        }
-    }
-
-    private User rsUser(ResultSet rs) throws SQLException {
-        return new User(rs.getInt("UserId"),
-                rs.getString("FirstName"),
-                rs.getString("LastName"),
-                rs.getString("Email").toLowerCase(),
-                rs.getString("Password"),
-                rs.getString("UserType"));
-    }
-
-    public User getCurrentUser(String email, String password) {
-        List<User> getAllUsers = getAllUsers();
-        for(User u: getAllUsers) {
-            if(u.getEmail().equals(email) && u.getPassword().equals(password)) {
-                return u;
-            }
-        }
-        return null;
     }
 
     @Override
@@ -348,7 +324,7 @@ public class DBRepository implements PlantyDBRepository {
         Date wateringDate = rs.getDate("WateringDate");
         long diff = (wateringDate.getTime() - today.getTime())/86400000;
         int waterDaysLeft = (int)diff;
-       return new UserPlant(rs.getInt("UsersPlantsID"),
+       return new UserPlant(rs.getInt("usersPlantsID"),
                rs.getString("NickName"),
                rs.getString("PlantSpecies"),
                rs.getString("LightNeeded"),

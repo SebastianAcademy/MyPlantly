@@ -3,7 +3,7 @@ package com.example.plantly.Domain;
 import java.util.Date;
 
 public class UserPlant {
-    public int UsersPlantsID;
+    public int usersPlantsID;
     public String nickName;
     public String plantSpecies;
     public String lightNeeded;
@@ -34,7 +34,7 @@ public class UserPlant {
     }
 
     public UserPlant(int UsersPlantsID, String nickName, String plantSpecies, String lightNeeded, int daysLeft, String poison) {
-        this.UsersPlantsID = UsersPlantsID;
+        this.usersPlantsID = UsersPlantsID;
         this.nickName = nickName;
         this.plantSpecies = plantSpecies;
         this.lightNeeded = lightNeeded;
@@ -45,7 +45,7 @@ public class UserPlant {
 
 
     public UserPlant(int usersPlantsID, String nickName, String plantSpecies, String lightNeeded, int waterDays, String poison, Date regDate, Date wateringDate, int waterDaysLeft) {
-        this.UsersPlantsID = usersPlantsID;
+        this.usersPlantsID = usersPlantsID;
         this.nickName = nickName;
         this.plantSpecies = plantSpecies;
         this.lightNeeded = lightNeeded;
@@ -57,7 +57,7 @@ public class UserPlant {
     }
 
     public UserPlant(int usersPlantsID, String nickName) {
-        this.UsersPlantsID = usersPlantsID;
+        this.usersPlantsID = usersPlantsID;
         this.nickName = nickName;
     }
 }
