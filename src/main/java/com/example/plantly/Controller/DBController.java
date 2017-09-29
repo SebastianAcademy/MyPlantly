@@ -32,24 +32,19 @@ public class DBController {
     @PostMapping("/signup")
     public ModelAndView signup(Model model, @RequestParam String email, @RequestParam String firstname, @RequestParam String lastname, @RequestParam String password, HttpSession session) {
         email = email.toLowerCase();
-        List<User> allUsers = DBConnection.getAllUsers();
-        for (int i = 0; i < allUsers.size(); i++) {
-            if (allUsers.get(i).getEmail().equals(email)) {
-                return new ModelAndView("index").addObject("infoSignup", "User already exists!");
-            }
+        if(!DBConnection.userExists(email)) {
+            User user = new User(firstname, lastname, email, password);
+            DBConnection.addUser(user);
+            return loggin(email, password, session);
         }
-        DBConnection.addUser(email, firstname, lastname, password);
-        User user = DBConnection.getCurrentUser(email, password);
-        session.setAttribute("user", user);
-        return new ModelAndView("userpage");
+        return new ModelAndView("index").addObject("infoSignup", "User already exists!");
     }
 
     @PostMapping("/user")
-    public ModelAndView loggedin(@RequestParam String email, @RequestParam String password, HttpSession session, Model model) {
+    public ModelAndView loggin(@RequestParam String email, @RequestParam String password, HttpSession session) {
         email = email.toLowerCase();
-        boolean userExists = DBConnection.userExists(email, password);
-        User user = DBConnection.getCurrentUser(email, password);
-        if(userExists) {
+        User user = DBConnection.checkUser(email, password);
+        if(user != null) {
             session.setAttribute("user", user);
             setSessionUserPlantsList(session);
             return new ModelAndView("userpage");
