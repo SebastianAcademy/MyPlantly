@@ -146,6 +146,10 @@ public class DBController {
     private void setSessionUserPlantsList(HttpSession session){
         User user = (User)session.getAttribute("user");
         List<UserPlant> userPlantList = DBConnection.getUserPlantsInfo(user.getUserId());
+        if(userPlantList.isEmpty()){
+
+            userPlantList.add(new UserPlant(0, "empty"));
+        }
         session.setAttribute("userPlantsList", userPlantList);
     }
 

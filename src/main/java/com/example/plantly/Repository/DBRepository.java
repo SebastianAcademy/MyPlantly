@@ -324,7 +324,7 @@ public class DBRepository implements PlantyDBRepository {
         Date wateringDate = rs.getDate("WateringDate");
         long diff = (wateringDate.getTime() - today.getTime())/86400000;
         int waterDaysLeft = (int)diff;
-       return new UserPlant(rs.getInt("UsersPlantsID"),
+       return new UserPlant(rs.getInt("usersPlantsID"),
                rs.getString("NickName"),
                rs.getString("PlantSpecies"),
                rs.getString("LightNeeded"),
