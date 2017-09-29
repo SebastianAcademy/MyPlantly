@@ -59,7 +59,7 @@ public class DBRepository implements PlantyDBRepository {
                 return null;
             }
         }catch(SQLException e){
-            throw new PlantyRepositoryException("Connection in getPlantByPlantSpecies failed!");
+            throw new PlantyRepositoryException("Connection in checkUser failed!");
         }
         return null;
     }
@@ -70,7 +70,7 @@ public class DBRepository implements PlantyDBRepository {
              PreparedStatement ps = conn.prepareStatement("Select Email From Users WHERE Email = ?")) {
             ps.setString(1, email);
             ResultSet rs = ps.executeQuery();
-            if(rs.next()){
+            if(rs.next()){ // if the query has worked there will be a next and the user exists else the user is new and we can proceed to adding
                 return true;
             }else{
                 return false;
@@ -81,7 +81,7 @@ public class DBRepository implements PlantyDBRepository {
         }
     }
 
-    public boolean setAdminToUser(int userId){
+    public boolean setAdminToUser(int userId){ // I´m going to add a form to set a user to admin, this is the prepared SQL to do this
         try(Connection conn = dataSource.getConnection();
             PreparedStatement ps = conn.prepareStatement("Update Users SET UserType = ? WHERE UserID = ?")) {
             ps.setString(1, "admin");
@@ -107,7 +107,7 @@ public class DBRepository implements PlantyDBRepository {
     }
 
     @Override
-    public List<String> getPlantName() {
+    public List<String> getPlantName() { //This method is used to get all the plant species and populate them in a list, then sent to the user page->add a plant->form for plant species
         try (Connection conn = dataSource.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery("SELECT PlantSpecies FROM Plants")) {
@@ -124,7 +124,7 @@ public class DBRepository implements PlantyDBRepository {
     }
 
     @Override
-    public Plant getPlantByPlantSpecies (String plantSpecies){
+    public Plant getPlantByPlantSpecies (String plantSpecies){ //This method is used to get all the information of a specific plant and then sent to the plant info page so the correct plants information can be shown
         try(Connection conn = dataSource.getConnection();
             PreparedStatement ps = conn.prepareStatement("SELECT * FROM Plants WHERE PlantSpecies = ?")){
             ps.setString(1, plantSpecies);
@@ -163,7 +163,7 @@ public class DBRepository implements PlantyDBRepository {
             ps.setInt(1, userId);
             ps.setString(2,nickName);
             try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
+                if (rs.next()) { // If the query got a hit the nick name already exists else we can add the plant with this nick name which will be done in addPlantToUserPlants
                     return true;
                 }else{
                     return false;
@@ -179,25 +179,22 @@ public class DBRepository implements PlantyDBRepository {
 
     @Override
     public void addPlantToUserPlants(String nickName, String photo, int userId, String plantSpecies, Date regDate){
-        int plantId = getPlantIdFromPlants(plantSpecies);
-        int defaultWateringDays = getDaysUntilWateringFromPlants(plantSpecies);
-        if(plantId != 0){
-            long timeadj = defaultWateringDays*24*3600;
-            Date waterDate = new Date(regDate.getTime() + timeadj*1000);
+        int defaultWateringDays = getDaysUntilWateringFromPlants(plantSpecies); // this could be done in SQL,  I´m looking in to that
+            long timeadj = defaultWateringDays*24*3600; // Since long is not big enough to calculate the watering sequence in milli seconds we use seconds
+            Date waterDate = new Date(regDate.getTime() + timeadj*1000); // To set next watering date by using the watering sequence for a specific plant
             try (Connection conn = dataSource.getConnection();
-                 PreparedStatement ps = conn.prepareStatement("INSERT INTO UsersPlants(UserID, NickName, Photo, PlantID, RegistrationDate, WateringDate, WateredDate) VALUES(?,?,?,?,?,?,?)")) {
+                 PreparedStatement ps = conn.prepareStatement("INSERT INTO UsersPlants(UserID, NickName, Photo, PlantID, RegistrationDate, WateringDate, WateredDate) VALUES(?,?,?,(select plantid from plants where plantspecies = ?),?,?,?)")) {
                 ps.setInt(1, userId);
                 ps.setString(2, nickName);
                 ps.setString(3, photo);
-                ps.setInt(4, plantId);
-                ps.setDate(5, regDate);
+                ps.setString(4, plantSpecies);
+                ps.setDate(5, regDate); // this date is used so we can calculate how old the plant is, in the future
                 ps.setDate(6,waterDate);
-                ps.setDate(7, regDate);
+                ps.setDate(7, regDate); // We asume that the registration date is the first time the plant got watered, hense last watered date
                 ps.executeUpdate();
             } catch (SQLException e) {
                 System.out.println("Add plant to User exception: " + e.getMessage());
             }
-        }
     }
 
     @Override
@@ -230,8 +227,8 @@ public class DBRepository implements PlantyDBRepository {
 
     @Override
     public void resetWaterDate(int usersPlantsID, Date regDate, int defaultWateringDays){
-        long timeadj = defaultWateringDays*24*3600;
-        Date waterDate = new Date(regDate.getTime() + timeadj*1000);
+        long timeadj = defaultWateringDays*24*3600; //long is not big enough to recalculate the watering sequence into milli seconds so we use seconds
+        Date waterDate = new Date(regDate.getTime() + timeadj*1000); //we add the watering sequence in milli seconds to the waterDate which will tell us what date the plant should be watered
         try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement("UPDATE UsersPlants " +
                      "SET WateredDate = ?, WateringDate = ? " +
@@ -244,8 +241,8 @@ public class DBRepository implements PlantyDBRepository {
             System.out.println("Reset Water Days Left exception: " + e.getMessage());
         }
     }
-    //Not used for now, will probably use dates instead
-    private int getDaysUntilWateringFromPlants(String plantSpecies) {
+
+    private int getDaysUntilWateringFromPlants(String plantSpecies) { //This method could be done in SQL directly in addUserPlants
         try(Connection conn = dataSource.getConnection();
             PreparedStatement ps = conn.prepareStatement("SELECT DaysUntilWatering FROM Plants WHERE PlantSpecies = ?")) {
             ps.setString(1, plantSpecies);
@@ -262,26 +259,6 @@ public class DBRepository implements PlantyDBRepository {
         }
         return 0;
     }
-
-    public int getPlantIdFromPlants(String plantSpecies){
-        try(Connection conn = dataSource.getConnection();
-            PreparedStatement ps = conn.prepareStatement("SELECT PlantID FROM Plants WHERE PlantSpecies = ?")) {
-            ps.setString(1, plantSpecies);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    int plantId = rs.getInt("plantID");
-                    return plantId;
-                }
-            }catch(SQLException e){
-                return 0;
-            }
-        }catch (SQLException e){
-            throw new PlantyRepositoryException(e);
-        }
-        return 0;
-    }
-
-    /* DELETE PLANT FROM USER DB */
 
     public void deletePlantFromUserPlants(int usersPlantsID) {
         if(usersPlantsID > 0){
