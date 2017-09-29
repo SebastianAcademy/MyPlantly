@@ -71,7 +71,7 @@
 
                 <div class="col-md-3">
 
-                        <div class="my-plantly-form" id="my-plantly-add-div" th:if="${session.userPlantsList != null}">
+                        <div class="my-plantly-form" id="my-plantly-add-div" th:if="${!session.userPlantsList.empty}">
                             <h2 th:text="${session.userPlantsList[0].nickName}"></h2>
                             <div class="needs-water">
                                 <h4 th:if="${session.userPlantsList[0].waterDaysLeft} gt 0" th:text="'Needs water in'" />
