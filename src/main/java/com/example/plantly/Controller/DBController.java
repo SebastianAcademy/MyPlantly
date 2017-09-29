@@ -151,6 +151,12 @@ public class DBController {
     private void setSessionUserPlantsList(HttpSession session){
         User user = (User)session.getAttribute("user");
         List<UserPlant> userPlantList = DBConnection.getUserPlantsInfo(user.getUserId());
+        if(userPlantList.isEmpty()){
+            System.out.println("Inside empty if");
+            UserPlant emptyPlant = new UserPlant(0, "empty");
+            userPlantList.add(emptyPlant);
+        }
+        System.out.println("Didn't enter if");
         session.setAttribute("userPlantsList", userPlantList);
     }
 
